@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../lib/site';
+import { pagePath } from '../lib/path';
+
+const path = pagePath(Astro.url);
+const links = [
+  { href: '/projects', label: 'Projects' },
+  { href: '/about', label: 'About' },
+  { href: '/cv', label: 'CV' },
+  { href: '/how-this-site-is-tested', label: 'How this site is tested' },
+];
+const current = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="mp-header">
+  <div class="mp-wrap mp-header__row">
+    <a class="mp-header__name" href="/" aria-current={path === '/' ? 'page' : undefined}>
+      {site.name}
+      <small>{site.title}</small>
+    </a>
+    <nav class="mp-nav" aria-label="Main">
+      {links.map((l) => (
+        <a href={l.href} aria-current={current(l.href) ? 'page' : undefined}>
+          {l.label}
+        </a>
+      ))}
+    </nav>
+    <button class="mp-theme" type="button" data-theme-toggle aria-label="Switch to dark theme">
+      <Icon name="moon" class="mp-theme__light" />
+      <Icon name="sun" class="mp-theme__dark" />
+    </button>
+  </div>
+</header>
+
+<script>
+  // Light/dark switch. A choice equal to the system setting is forgotten, so the site
+  // follows the system again (src/lib/theme.ts).
+  const KEY = 'mp-theme';
+  const root = document.documentElement;
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const system = () => (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const currentTheme = () => root.dataset.theme ?? system();
+  const label = () =>
+    button?.setAttribute(
+      'aria-label',
+      currentTheme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
+    );
+  label();
+  button?.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    try {
+      if (next === system()) {
+        delete root.dataset.theme;
+        localStorage.removeItem(KEY);
+      } else {
+        root.dataset.theme = next;
+        localStorage.setItem(KEY, next);
+      }
+    } catch {
+      root.dataset.theme = next;
+    }
+    label();
+  });
+</script>

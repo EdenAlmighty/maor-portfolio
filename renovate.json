@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":pinAllExceptPeerDependencies"],
+  "timezone": "Asia/Jerusalem",
+  "schedule": ["before 9am on monday"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev tooling (minor and patch)"
+    },
+    {
+      "matchPackageNames": ["astro", "@astrojs/**"],
+      "groupName": "astro"
+    }
+  ]
+}

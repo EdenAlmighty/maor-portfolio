@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { breadcrumbNode, graph, pageNode, personNode, websiteNode } from '../lib/schema';
+import { site } from '../lib/site';
+import { themeScript } from '../lib/theme';
+import { pagePath } from '../lib/path';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  /** schema.org type of the page node: WebPage, ProfilePage, CollectionPage, AboutPage. */
+  pageType?: string;
+  /** Breadcrumb trail after Home; none on the home page. */
+  crumbs?: { name: string; path: string }[];
+  /** Extra JSON-LD nodes for this page. */
+  schema?: Record<string, unknown>[];
+  ogType?: 'website' | 'article' | 'profile';
+}
+
+const {
+  title,
+  description,
+  noindex = false,
+  pageType = 'WebPage',
+  crumbs = [],
+  schema = [],
+  ogType = 'website',
+} = Astro.props;
+const path = pagePath(Astro.url);
+const canonical = path === '/' ? `${site.url}/` : `${site.url}${path}`;
+const slug = path === '/' ? 'home' : path.slice(1).replace(/\//g, '-');
+const ogImage = `${site.url}/og/${slug}.png`;
+const jsonLd = graph([
+  websiteNode(),
+  personNode(),
+  pageNode(pageType, canonical, title, description),
+  ...(crumbs.length ? [breadcrumbNode([{ name: 'Home', path: '/' }, ...crumbs])] : []),
+  ...schema,
+]);
+// No font preloads: the first paint uses the metric-matched fallbacks and the web fonts
+// follow right after it (src/scripts/fonts.ts, .mp-fonts in global.css).
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#f4f6f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1317" media="(prefers-color-scheme: dark)" />
+    <script is:inline set:html={themeScript} />
+    <meta name="author" content={site.name} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/icon-96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {!noindex && <script type="application/ld+json" set:html={jsonLd} />}
+  </head>
+  <body>
+    <a class="mp-skip" href="#main">
+      Skip to content
+    </a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/fonts';
+      import '../scripts/ruler';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,533 @@
+/* Components of the drawing sheet. Logical properties only; no radius, no shadows. */
+
+@layer components {
+  /* ---------- Page width and the 8-zone grid ---------- */
+  .mp-wrap {
+    width: 100%;
+    max-width: var(--sheet-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  /* Content snaps to the same 8 columns the sheet border numbers (zones 1 to 8). */
+  .mp-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .mp-visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ---------- Skip link ---------- */
+  .mp-skip {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: -4rem;
+    z-index: 50;
+    padding: 0.6rem 1rem;
+    background: var(--ink);
+    color: var(--on-ink);
+    font-weight: 700;
+  }
+  .mp-skip:focus {
+    top: 0.75rem;
+  }
+
+  /* ---------- Header: the drawing-list strip ---------- */
+  .mp-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-block-end: var(--rule) solid var(--line);
+  }
+  .mp-header__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    min-height: 3.5rem;
+    flex-wrap: wrap;
+  }
+  .mp-header__name {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    margin-inline-end: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: var(--touch);
+  }
+  .mp-header__name small {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    letter-spacing: 0;
+  }
+  .mp-nav {
+    display: flex;
+    gap: 0.25rem 1.1rem;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+  }
+  .mp-nav a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    border-block-end: 2px solid transparent;
+  }
+  .mp-nav a:hover {
+    border-block-end-color: var(--ink);
+  }
+  .mp-nav a[aria-current='page'] {
+    border-block-end-color: var(--ink);
+    font-weight: 700;
+  }
+  .mp-theme {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--touch);
+    block-size: var(--touch);
+    border: var(--rule) solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .mp-theme:hover {
+    background: var(--mark);
+    color: var(--mark-ink);
+  }
+  .mp-theme svg {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+  }
+  .mp-theme .mp-theme__dark {
+    display: none;
+  }
+  :root[data-theme='dark'] .mp-theme .mp-theme__light {
+    display: none;
+  }
+  :root[data-theme='dark'] .mp-theme .mp-theme__dark {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .mp-theme .mp-theme__light {
+      display: none;
+    }
+    :root:not([data-theme='light']) .mp-theme .mp-theme__dark {
+      display: block;
+    }
+  }
+  @media (max-width: 40rem) {
+    .mp-header {
+      position: static;
+    }
+    .mp-nav {
+      order: 3;
+      inline-size: 100%;
+      border-block-start: var(--rule) solid var(--line-2);
+      justify-content: space-between;
+      gap: 0;
+    }
+  }
+
+  /* ---------- Buttons ---------- */
+  .mp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: var(--touch);
+    padding: 0.55rem 1.1rem 0.45rem;
+    border: var(--rule) solid var(--line);
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 160ms var(--ease),
+      color 160ms var(--ease);
+  }
+  .mp-btn--primary {
+    background: var(--ink);
+    color: var(--on-ink);
+  }
+  .mp-btn--primary:hover,
+  .mp-btn--ghost:hover {
+    background: var(--mark);
+    color: var(--mark-ink);
+    border-color: var(--mark-ink);
+  }
+  .mp-btn--ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+  .mp-btn small {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    opacity: 0.85;
+  }
+  .mp-btn svg {
+    inline-size: 1.05rem;
+    block-size: 1.05rem;
+    flex: none;
+  }
+
+  /* ---------- The sheet: border, zones, title block ---------- */
+  .mp-sheet {
+    position: relative;
+    border: var(--rule) solid var(--line);
+    margin-block: 2rem;
+    padding: clamp(1.25rem, 3.2vw, 2.75rem);
+  }
+  /* Zone numbers above the sheet, letters down its side: real coordinates of the
+     8-column grid (see .mp-grid). Decorative for assistive technology. */
+  .mp-zones {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-2);
+  }
+  .mp-zones__cols {
+    position: absolute;
+    inset-inline: clamp(1.5rem, 3.2vw, 2.75rem);
+    top: -1.35rem;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .mp-zones__cols span {
+    border-inline-start: var(--rule) solid var(--line-2);
+    padding-inline-start: 0.35rem;
+    line-height: 1;
+  }
+  .mp-zones__rows {
+    position: absolute;
+    inset-block: clamp(1.5rem, 3.2vw, 2.75rem);
+    inset-inline-start: -1.1rem;
+    display: grid;
+    grid-auto-rows: 1fr;
+  }
+  .mp-zones__rows span {
+    border-block-start: var(--rule) solid var(--line-2);
+    padding-block-start: 0.25rem;
+    line-height: 1;
+  }
+  @media (max-width: 40rem) {
+    .mp-zones__rows {
+      display: none;
+    }
+  }
+
+  /* Title block: cells divided by 1px ink rules (the grid gap shows the ink beneath). */
+  .mp-tb {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--rule);
+    background: var(--line);
+    border: var(--rule) solid var(--line);
+    font-size: 0.9375rem;
+  }
+  .mp-tb__cell {
+    background: var(--paper);
+    padding: 0.45rem 0.65rem 0.5rem;
+    min-inline-size: 0;
+  }
+  .mp-tb__cell--wide {
+    grid-column: span 2;
+  }
+  .mp-tb__cell--full {
+    grid-column: 1 / -1;
+  }
+  .mp-tb__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+  .mp-tb__value {
+    display: block;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .mp-tb__value--mono {
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .mp-tb__action {
+    padding: 0;
+  }
+  .mp-tb__action .mp-btn {
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+    justify-content: space-between;
+    padding: 0.7rem 0.75rem 0.6rem;
+  }
+
+  /* ---------- Checker's marks ---------- */
+  /* Highlighter: verified. A stroke behind the lower part of the text, like a real pen. */
+  .mp-mark {
+    color: inherit;
+    background-image: linear-gradient(var(--mark), var(--mark));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 100% 0.62em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding-inline: 0.06em;
+  }
+  /* On graphite a half stroke would sit under light text, so the whole word is marked
+     and the text turns dark. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .mp-mark {
+      color: var(--mark-ink);
+      background-size: 100% 100%;
+      background-position: 0 0;
+    }
+  }
+  :root[data-theme='dark'] .mp-mark {
+    color: var(--mark-ink);
+    background-size: 100% 100%;
+    background-position: 0 0;
+  }
+  /* The one authored motion: the checker's pen sweeps across the verified claim on load. */
+  @media (prefers-reduced-motion: no-preference) {
+    .mp-mark--sweep {
+      animation: mp-sweep 900ms 350ms var(--ease) both;
+    }
+    @keyframes mp-sweep {
+      from {
+        background-size: 0% var(--mark-h, 0.62em);
+      }
+    }
+    :root[data-theme='dark'] .mp-mark--sweep {
+      --mark-h: 100%;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme='light']) .mp-mark--sweep {
+        --mark-h: 100%;
+      }
+    }
+  }
+
+  /* Balloon: a numbered callout, as on a drawing. */
+  .mp-balloon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 2em;
+    block-size: 2em;
+    border: var(--rule) solid var(--line);
+    border-radius: 50%;
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1;
+    flex: none;
+  }
+  /* Revision triangle: a defect found, with its issue number. */
+  .mp-rev {
+    display: inline-grid;
+    place-items: end center;
+    inline-size: 2.1em;
+    block-size: 1.85em;
+    padding-block-end: 0.18em;
+    color: var(--fix);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.75rem;
+    line-height: 1;
+    background: no-repeat center / 100% 100%
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 21'%3E%3Cpath d='M12 1 23 20H1z' fill='none' stroke='%23b3261e' stroke-width='1.4'/%3E%3C/svg%3E");
+    flex: none;
+  }
+  :root[data-theme='dark'] .mp-rev {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 21'%3E%3Cpath d='M12 1 23 20H1z' fill='none' stroke='%23ff8a7a' stroke-width='1.4'/%3E%3C/svg%3E");
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .mp-rev {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 21'%3E%3Cpath d='M12 1 23 20H1z' fill='none' stroke='%23ff8a7a' stroke-width='1.4'/%3E%3C/svg%3E");
+    }
+  }
+
+  /* ---------- Text blocks ---------- */
+  .mp-h1 {
+    font-size: clamp(2.25rem, 1.2rem + 4.4vw, 4.75rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .mp-h2 {
+    font-size: clamp(1.6rem, 1.15rem + 1.9vw, 2.6rem);
+  }
+  .mp-h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  .mp-lede {
+    font-size: clamp(1.1rem, 1rem + 0.45vw, 1.3rem);
+    line-height: 1.5;
+    max-inline-size: 46ch;
+    color: var(--ink);
+  }
+  .mp-prose {
+    max-inline-size: var(--measure);
+  }
+  .mp-prose p + p {
+    margin-block-start: 1em;
+  }
+  .mp-muted {
+    color: var(--ink-2);
+  }
+  .mp-mono {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+  }
+  .mp-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  /* Section spacing: more space above a heading than below it. */
+  .mp-section {
+    padding-block: clamp(3rem, 7vw, 6rem) 0;
+  }
+  .mp-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-block-end: 1rem;
+    margin-block-end: 1.5rem;
+    border-block-end: var(--rule) solid var(--line);
+  }
+
+  /* ---------- Tables: the drawing list, the parts list, the revision table ---------- */
+  .mp-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  .mp-table th,
+  .mp-table td {
+    text-align: start;
+    vertical-align: top;
+    padding: 0.7rem 0.75rem 0.65rem 0;
+    border-block-end: var(--rule) solid var(--line-2);
+  }
+  .mp-table thead th {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    border-block-end-color: var(--line);
+    padding-block: 0.4rem;
+  }
+  .mp-table tbody th {
+    font-weight: 700;
+  }
+  .mp-table td.mp-table__num,
+  .mp-table th.mp-table__num {
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+  .mp-scroll {
+    overflow-x: auto;
+  }
+
+  /* Tag list: testing types and tools, set as plain text with thin dividers. */
+  .mp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+    font-size: 0.8125rem;
+  }
+  .mp-tags li {
+    border: var(--rule) solid var(--line-2);
+    padding: 0.05rem 0.4rem 0;
+    line-height: 1.5;
+  }
+
+  /* Numbered notes, as in a drawing's general notes. */
+  .mp-notes {
+    counter-reset: note;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+    max-inline-size: var(--measure);
+  }
+  .mp-notes > li {
+    counter-increment: note;
+    position: relative;
+    padding-inline-start: 2.25rem;
+  }
+  .mp-notes > li::before {
+    content: counter(note) '.';
+    position: absolute;
+    inset-inline-start: 0;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  /* TODO marker: shows only on previews (src/lib/todo.ts). */
+  .mp-todo {
+    display: inline-block;
+    border: 1px dashed var(--fix);
+    color: var(--fix);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* ---------- Footer: a title-block strip ---------- */
+  .mp-footer {
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    border-block-start: var(--rule) solid var(--line);
+  }
+  /* The footer strip wraps, so its cells draw their own rules instead of the ink gap. */
+  .mp-footer .mp-tb {
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0;
+    background: transparent;
+    border: 0;
+    border-block-start: var(--rule) solid var(--line);
+  }
+  .mp-footer .mp-tb__cell {
+    border-inline-end: var(--rule) solid var(--line-2);
+    border-block-end: var(--rule) solid var(--line-2);
+  }
+  .mp-footer a {
+    text-decoration: none;
+  }
+  .mp-footer a:hover {
+    text-decoration: underline;
+  }
+}

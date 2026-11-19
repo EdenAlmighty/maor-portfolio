@@ -1,0 +1,124 @@
+---
+// The featured projects as rows of a drawing list. The first row is the lead project and
+// gets more room; every row ends in its case study.
+import { kindLabels, typeLabels } from '../lib/labels';
+import { clientLabel, formatRange, type Project } from '../lib/content';
+
+interface Props {
+  projects: Project[];
+}
+const { projects } = Astro.props;
+---
+
+<ol class="mp-rows">
+  {projects.map((p, i) => (
+    <li class:list={['mp-row', i === 0 && 'mp-row--lead']}>
+      <span class="mp-balloon" aria-hidden="true">
+        {i + 1}
+      </span>
+      <div class="mp-row__head">
+        <h3 class="mp-h3">
+          <a href={`/projects/${p.id}`}>{p.data.title}</a>
+        </h3>
+        <p class="mp-row__meta">
+          <span>{kindLabels[p.data.kind]}</span>
+          {clientLabel(p) && <span>{clientLabel(p)}</span>}
+          <span class="mp-mono">{formatRange(p.data.start, p.data.end)}</span>
+        </p>
+      </div>
+      <div class="mp-row__body">
+        <p>{p.data.summary}</p>
+        <ul class="mp-tags" aria-label="Testing types">
+          {p.data.types.map((t) => (
+            <li>{typeLabels[t]}</li>
+          ))}
+        </ul>
+      </div>
+      <p class="mp-row__result">
+        {p.data.findings.length > 0 && (
+          <span class="mp-rev" title="Defects reported">
+            {p.data.findings.length}
+          </span>
+        )}
+        <span>{p.data.result}</span>
+      </p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .mp-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mp-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 3fr) minmax(0, 3fr) minmax(0, 2fr);
+    gap: 0.75rem clamp(1rem, 2.5vw, 2rem);
+    padding-block: 1.4rem;
+    border-block-end: var(--rule) solid var(--line-2);
+    align-items: start;
+  }
+  .mp-row--lead {
+    padding-block: 2rem;
+  }
+  .mp-row--lead .mp-h3 {
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+  }
+  .mp-row__head {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .mp-row__head a {
+    text-decoration: none;
+  }
+  /* The whole row is the link's target area; the title stays the only link. */
+  .mp-row__head a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .mp-row:hover .mp-row__head a {
+    background-image: linear-gradient(var(--mark), var(--mark));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 100% 0.55em;
+  }
+  .mp-row:has(a:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .mp-row__head a:focus-visible {
+    outline: none;
+  }
+  .mp-row__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.9rem;
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+  .mp-row__body {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .mp-row__result {
+    display: flex;
+    gap: 0.6rem;
+    align-items: start;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  @media (max-width: 60rem) {
+    .mp-row {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+    }
+    .mp-row__body,
+    .mp-row__result {
+      grid-column: 2;
+    }
+  }
+</style>

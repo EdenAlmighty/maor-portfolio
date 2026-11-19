@@ -1,0 +1,46 @@
+{
+  "name": "Checked drawing sheets",
+  "source": "src/styles/global.css",
+  "color": {
+    "light": {
+      "paper": "#f4f6f3",
+      "paper-2": "#e9ede8",
+      "ink": "#111820",
+      "ink-2": "#47515a",
+      "line-2": "#a3acb2",
+      "mark": "#ffe14a",
+      "mark-ink": "#111820",
+      "fix": "#b3261e"
+    },
+    "dark": {
+      "paper": "#0e1317",
+      "paper-2": "#161d23",
+      "ink": "#e6ecef",
+      "ink-2": "#a3aeb6",
+      "line-2": "#3c4750",
+      "mark": "#f5d63d",
+      "mark-ink": "#0e1317",
+      "fix": "#ff8a7a"
+    }
+  },
+  "type": {
+    "sans": { "family": "Overpass", "weights": [400, 700, 800], "file": "public/fonts/overpass-latin-wght-normal.woff2" },
+    "mono": { "family": "Overpass Mono", "weights": [500, 600], "file": "public/fonts/overpass-mono-latin-wght-normal.woff2" },
+    "scale": {
+      "h1": "clamp(2.25rem, 1.2rem + 4.4vw, 4.75rem)",
+      "h2": "clamp(1.6rem, 1.15rem + 1.9vw, 2.6rem)",
+      "h3": "1.25rem",
+      "body": "1.0625rem",
+      "label": "0.6875rem"
+    }
+  },
+  "space": {
+    "gutter": "clamp(1rem, 4vw, 2.5rem)",
+    "sheetMax": "82rem",
+    "measure": "68ch",
+    "touch": "44px",
+    "sectionTop": "clamp(3rem, 7vw, 6rem)"
+  },
+  "shape": { "radius": 0, "rule": "1px", "shadow": "none" },
+  "motion": { "ease": "cubic-bezier(0.16, 1, 0.3, 1)", "sweep": "900ms 350ms" }
+}

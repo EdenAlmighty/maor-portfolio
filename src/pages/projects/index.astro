@@ -1,0 +1,212 @@
+---
+import Base from '../../layouts/Base.astro';
+import Actions from '../../components/Actions.astro';
+import Evidence from '../../components/Evidence.astro';
+import PageSheet from '../../components/PageSheet.astro';
+import { kindLabels, testingTypes, typeLabels } from '../../lib/labels';
+import { clientLabel, formatRange, getProjects } from '../../lib/content';
+import { site } from '../../lib/site';
+
+const projects = await getProjects();
+const notes = projects.filter((p) => !p.data.featured);
+const counts = testingTypes
+  .map((t) => ({ t, n: projects.filter((p) => p.data.types.includes(t)).length }))
+  .filter((c) => c.n > 0);
+const freelance = projects.filter((p) => p.data.kind === 'freelance').length;
+const title = `QA projects by ${site.name}`;
+const description = `${projects.length} QA projects: freelance client work, TripleTen bootcamp projects and practice. Manual, automation, API, mobile, load and database testing.`;
+---
+
+<Base
+  title={title}
+  description={description}
+  pageType="CollectionPage"
+  crumbs={[{ name: 'Projects', path: '/projects' }]}
+>
+  <PageSheet
+    title="Projects"
+    path="/projects"
+    cells={[
+      { label: 'Projects', value: String(projects.length), mono: true },
+      { label: 'Freelance', value: String(freelance), mono: true },
+    ]}
+  >
+    <p class="mp-lede">
+      Every project I have tested, newest client work first. Each one says what kind of work it was:
+      freelance, TripleTen bootcamp, a practice project or course work.
+    </p>
+    <ul class="mp-legend" aria-label="Projects by testing type">
+      {counts.map((c) => (
+        <li>
+          {typeLabels[c.t]} <span class="mp-mono">{c.n}</span>
+        </li>
+      ))}
+    </ul>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <section class="mp-section" aria-labelledby="list-title">
+      <div class="mp-section__head">
+        <h2 id="list-title" class="mp-h2">
+          Drawing list
+        </h2>
+        <p class="mp-muted">Case studies have their own sheet; the rest are described below.</p>
+      </div>
+      <section class="mp-scroll" tabindex="0" aria-label="All projects">
+        <table class="mp-table mp-list">
+          <caption class="mp-visually-hidden">All projects</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mp-table__num">
+                No.
+              </th>
+              <th scope="col">Project</th>
+              <th scope="col">Kind</th>
+              <th scope="col">Testing</th>
+              <th scope="col" class="mp-table__num">
+                Dates
+              </th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map((p, i) => (
+              <tr>
+                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
+                <th scope="row">
+                  <a href={p.data.featured ? `/projects/${p.id}` : `#${p.id}`}>{p.data.title}</a>
+                  {p.data.featured && <span class="mp-list__case">Case study</span>}
+                  {clientLabel(p) && <span class="mp-list__client">{clientLabel(p)}</span>}
+                </th>
+                <td>{kindLabels[p.data.kind]}</td>
+                <td>{p.data.types.map((t) => typeLabels[t]).join(', ')}</td>
+                <td class="mp-table__num">{formatRange(p.data.start, p.data.end)}</td>
+                <td>{p.data.result}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section class="mp-section" aria-labelledby="notes-title">
+      <div class="mp-section__head">
+        <h2 id="notes-title" class="mp-h2">
+          Project notes
+        </h2>
+      </div>
+      <div class="mp-pnotes">
+        {notes.map((p) => (
+          <article id={p.id} class="mp-pnote" aria-labelledby={`${p.id}-title`}>
+            <header class="mp-pnote__head">
+              <h3 id={`${p.id}-title`} class="mp-h3">
+                {p.data.title}
+              </h3>
+              <p class="mp-muted">
+                {kindLabels[p.data.kind]},{' '}
+                <span class="mp-mono">{formatRange(p.data.start, p.data.end)}</span>
+              </p>
+              <ul class="mp-tags" aria-label="Tools">
+                {p.data.tools.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </header>
+            <div class="mp-pnote__body">
+              <p>{p.data.summary}</p>
+              <ol class="mp-notes">
+                {p.data.notes.map((n) => (
+                  <li>{n}</li>
+                ))}
+              </ol>
+              <Evidence items={p.data.evidence} />
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mp-sheet mp-endsheet" aria-label="Contact">
+      <p class="mp-h3">Want the short version? It is all on one page in my CV.</p>
+      <Actions path="/projects" />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .mp-legend {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+  .mp-legend .mp-mono {
+    color: var(--ink-2);
+  }
+  .mp-list th[scope='row'] {
+    min-inline-size: 13rem;
+  }
+  .mp-list th[scope='row'] a {
+    display: inline-block;
+  }
+  .mp-list__case,
+  .mp-list__client {
+    display: block;
+    font-weight: 400;
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+  }
+  .mp-list__case {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.6875rem;
+  }
+  .mp-list td:last-child {
+    min-inline-size: 16rem;
+  }
+  .mp-pnotes {
+    display: grid;
+  }
+  .mp-pnote {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: 1rem;
+    padding-block: 2rem;
+    border-block-end: var(--rule) solid var(--line-2);
+    scroll-margin-top: 5rem;
+  }
+  .mp-pnote:first-child {
+    padding-block-start: 0.5rem;
+  }
+  .mp-pnote:target {
+    background: linear-gradient(var(--paper-2), var(--paper-2));
+  }
+  .mp-pnote__head {
+    grid-column: 1 / span 3;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .mp-pnote__body {
+    grid-column: 4 / span 5;
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (max-width: 60rem) {
+    .mp-pnote__head,
+    .mp-pnote__body {
+      grid-column: 1 / -1;
+    }
+  }
+  .mp-endsheet {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    justify-items: start;
+  }
+</style>

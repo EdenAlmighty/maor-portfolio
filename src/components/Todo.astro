@@ -1,0 +1,11 @@
+---
+// A visible marker for content Maor has not provided yet; left out of the production
+// build (lib/todo.ts). scripts/check-todos.mjs lists every one.
+import { showTodos } from '../lib/todo';
+interface Props {
+  label?: string;
+}
+const { label = 'TODO' } = Astro.props;
+---
+
+{showTodos && <span class="mp-todo">TODO: {label}</span>}

@@ -1,0 +1,31 @@
+---
+// One icon family: 24px grid, 1.5px stroke, square caps, drawn for this site.
+// No brand logos: services are named in text.
+interface Props {
+  name: 'download' | 'mail' | 'external' | 'sun' | 'moon' | 'doc';
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+const paths: Record<Props['name'], string> = {
+  download: 'M12 3v12M7 10l5 5 5-5M4 19h16',
+  mail: 'M3 6h18v12H3zM3 6l9 7 9-7',
+  external: 'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',
+  sun: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+  doc: 'M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7',
+};
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={paths[name]}></path>
+</svg>

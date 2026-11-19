@@ -1,0 +1,177 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Weekly: the evidence links point at GitHub and Google Drive, which can change under us.
+  schedule:
+    - cron: '0 6 * * 1'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+# Quality gates run on Windows with Chrome only (Eden's rule). Jobs that only run
+# wrangler and curl stay on Ubuntu. The Cloudflare jobs do nothing until Maor's account
+# exists and CLOUDFLARE_API_TOKEN is set (PLAN.md, "Building before Cloudflare exists").
+
+jobs:
+  quality:
+    name: Quality gates
+    if: github.event_name != 'schedule'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+
+      - name: Lint
+        run: npm run lint
+      - name: Formatting
+        run: npm run format:check
+      - name: Types and content schemas
+        run: npm run check
+      - name: TODO markers (reported here, blocking at launch)
+        run: npm run check:todos
+
+      - run: npm run build
+      - name: Valid HTML
+        run: npm run check:html
+      - name: Performance budget (JS, preloaded fonts)
+        run: npm run check:budget
+      - name: Broken links
+        run: npm run check:links
+
+      - id: browsers
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
+      - name: Playwright and axe (smoke, SEO, a11y, no-JavaScript, layout, budget, /go/, CV)
+        run: npm test
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.15.1 autorun
+      - name: Lighthouse Agentic Browsing
+        run: npm run check:agentic
+
+      # The results the /how-this-site-is-tested page shows.
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            reports/
+            playwright-report/
+            .lighthouseci/
+          include-hidden-files: true
+          retention-days: 14
+
+  evidence:
+    name: Evidence links (weekly)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: npm run check:evidence
+
+  preview:
+    name: Cloudflare preview
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - id: cf
+        name: Cloudflare account connected?
+        run: echo "ready=${{ env.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+      - if: steps.cf.outputs.ready == 'true'
+        uses: actions/checkout@v5
+      - if: steps.cf.outputs.ready == 'true'
+        uses: ./.github/actions/setup
+      - if: steps.cf.outputs.ready == 'true'
+        run: npm run build
+      - name: Upload a preview version
+        if: steps.cf.outputs.ready == 'true'
+        id: upload
+        run: |
+          npx wrangler versions upload --preview-alias "pr-${{ github.event.number }}" \
+            --message "PR #${{ github.event.number }} ${{ github.event.pull_request.head.sha }}" | tee upload.log
+          url=$(grep -oE 'https://pr-[0-9]+-[^ ]+\.workers\.dev' upload.log | head -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Comment the preview URL
+        if: steps.upload.outputs.url != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment "${{ github.event.number }}" --repo "${{ github.repository }}" --edit-last --create-if-none \
+            --body "Preview: ${{ steps.upload.outputs.url }} (commit ${{ github.event.pull_request.head.sha }})"
+      # LCP is measured on Cloudflare itself, where HTML is compressed as in production.
+      - name: Lighthouse on the preview (mobile budget)
+        if: steps.upload.outputs.url != ''
+        run: |
+          url="${{ steps.upload.outputs.url }}"
+          npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.preview.json \
+            --collect.url="$url/" --collect.url="$url/projects/moving-quote-app"
+
+  deploy:
+    name: Deploy to production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: quality
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - id: cf
+        name: Cloudflare account connected?
+        run: echo "ready=${{ env.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+      - if: steps.cf.outputs.ready == 'true'
+        uses: actions/checkout@v5
+      - if: steps.cf.outputs.ready == 'true'
+        uses: ./.github/actions/setup
+      - name: Missing content report
+        if: steps.cf.outputs.ready == 'true'
+        run: npm run check:todos
+      # This run's passing results go onto /how-this-site-is-tested.
+      - if: steps.cf.outputs.ready == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: reports
+      - name: Test report for the site
+        if: steps.cf.outputs.ready == 'true'
+        run: npm run test-report
+      - name: Build (placeholders left out)
+        if: steps.cf.outputs.ready == 'true'
+        run: npm run build
+        env:
+          PUBLIC_HIDE_TODOS: 'true'
+      - name: Database migrations
+        if: steps.cf.outputs.ready == 'true'
+        run: npm run db:migrate:remote
+      - name: Deploy
+        if: steps.cf.outputs.ready == 'true'
+        run: npx wrangler deploy
+      - name: Smoke test the live site
+        if: steps.cf.outputs.ready == 'true'
+        run: |
+          # TODO(content): Maor's domain, once it is in wrangler.jsonc.
+          base=https://maorshaer.com
+          for path in / /projects /cv /llms.txt /robots.txt /sitemap-index.xml /Maor-Matthew-Shaer-QA-Engineer-CV.pdf; do
+            test "$(curl -s -o /dev/null -w '%{http_code}' "$base$path")" = 200 || { echo "$path is not 200"; exit 1; }
+          done
+          # Server routes must reach the Worker, not the static 404 page.
+          test "$(curl -s -o /dev/null -w '%{http_code}' "$base/go/cv?from=/")" = 302 || { echo "/go/cv does not redirect"; exit 1; }

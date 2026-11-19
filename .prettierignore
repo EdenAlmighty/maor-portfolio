@@ -1,0 +1,17 @@
+dist/
+.astro/
+.wrangler/
+node_modules/
+package-lock.json
+worker-configuration.d.ts
+test-results/
+playwright-report/
+.lighthouseci/
+PLAN.md
+sources/
+.impeccable/
+reports/
+public/og/
+src/data/test-report.json
+CONTENT-MAP.md
+PRODUCT.md

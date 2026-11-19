@@ -1,0 +1,238 @@
+---
+import Base from '../layouts/Base.astro';
+import Actions from '../components/Actions.astro';
+import PageSheet from '../components/PageSheet.astro';
+import { report, suiteLabels } from '../lib/report';
+import { site } from '../lib/site';
+
+const gates = [
+  {
+    gate: 'Lint and formatting',
+    tool: 'ESLint, Prettier',
+    checks: 'Code style and common mistakes in every file',
+  },
+  {
+    gate: 'Types',
+    tool: 'TypeScript, astro check',
+    checks:
+      'Every page and component type-checks; a project file with a missing field fails the build',
+  },
+  {
+    gate: 'Valid HTML',
+    tool: 'html-validate',
+    checks: 'Every built page against the HTML standard',
+  },
+  {
+    gate: 'Broken links',
+    tool: 'linkinator',
+    checks: 'Every link between pages of this site',
+  },
+  {
+    gate: 'Performance budget',
+    tool: 'Node script',
+    checks: 'At most 30 KB of JavaScript per page; no font preloads',
+  },
+  {
+    gate: 'Browser tests',
+    tool: 'Playwright, Chrome',
+    checks: 'Every page on a phone and a desktop profile (the suites are listed below)',
+  },
+  {
+    gate: 'Accessibility',
+    tool: 'axe-core',
+    checks: 'WCAG 2.2 AA and best-practice rules, with reduced motion, zero violations allowed',
+  },
+  {
+    gate: 'Lighthouse',
+    tool: 'Lighthouse CI',
+    checks:
+      'Performance 95 or more; Accessibility, Best Practices and SEO 100; layout shift 0.05 or less',
+  },
+  {
+    gate: 'Evidence links',
+    tool: 'Node script, weekly',
+    checks:
+      'Every GitHub, Google Drive and Sheets link behind the projects still opens without a login',
+  },
+  {
+    gate: 'Agent readiness',
+    tool: 'Lighthouse Agentic Browsing',
+    checks: 'The accessibility tree, llms.txt and layout stability, as AI agents see the site',
+  },
+];
+const description =
+  'How the portfolio of a QA engineer tests itself: Playwright, axe, Lighthouse, HTML validation, link checks and a performance budget on every change.';
+---
+
+<Base
+  title="How this site is tested"
+  description={description}
+  crumbs={[{ name: 'How this site is tested', path: '/how-this-site-is-tested' }]}
+>
+  <PageSheet
+    title="How this site is tested"
+    path="/how-this-site-is-tested"
+    cells={[
+      { label: 'Gates', value: String(gates.length), mono: true },
+      {
+        label: 'Last run',
+        value: report.generatedAt ? report.generatedAt.slice(0, 10) : 'Not yet',
+        mono: true,
+      },
+    ]}
+  >
+    <p class="mp-lede">
+      I test other people's products, so this site gets the same treatment. Nothing reaches the live
+      site until every check below passes. That is also why this page only ever shows passing
+      results: a failing run never deploys.
+    </p>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <section class="mp-section" aria-labelledby="gates-title">
+      <div class="mp-section__head">
+        <h2 id="gates-title" class="mp-h2">
+          The gates, in the order they run
+        </h2>
+        <a href={site.repo}>The code and the tests</a>
+      </div>
+      <section class="mp-scroll" tabindex="0" aria-label="Quality gates">
+        <table class="mp-table">
+          <caption class="mp-visually-hidden">Quality gates</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mp-table__num">
+                No.
+              </th>
+              <th scope="col">Gate</th>
+              <th scope="col">Tool</th>
+              <th scope="col">What it checks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gates.map((g, i) => (
+              <tr>
+                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
+                <th scope="row">{g.gate}</th>
+                <td>{g.tool}</td>
+                <td>{g.checks}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section class="mp-section" aria-labelledby="suites-title">
+      <div class="mp-section__head">
+        <h2 id="suites-title" class="mp-h2">
+          Browser test suites
+        </h2>
+        <p class="mp-muted mp-mono">
+          {report.playwright
+            ? `${report.playwright.passed} of ${report.playwright.total} tests passed on the last run`
+            : 'Counts appear after the first full run'}
+        </p>
+      </div>
+      <section class="mp-scroll" tabindex="0" aria-label="Playwright suites">
+        <table class="mp-table">
+          <caption class="mp-visually-hidden">Playwright suites</caption>
+          <thead>
+            <tr>
+              <th scope="col">Suite</th>
+              <th scope="col">What it proves</th>
+              <th scope="col" class="mp-table__num">
+                Tests
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(suiteLabels).map(([suite, label]) => (
+              <tr>
+                <th scope="row" class="mp-mono">
+                  {suite}
+                </th>
+                <td>{label}</td>
+                <td class="mp-table__num">{report.playwright?.suites[suite] ?? '–'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    {report.lighthouse && (
+      <section class="mp-section" aria-labelledby="lh-title">
+        <div class="mp-section__head">
+          <h2 id="lh-title" class="mp-h2">
+            Lighthouse, mobile
+          </h2>
+        </div>
+        <section class="mp-scroll" tabindex="0" aria-label="Lighthouse scores per page">
+          <table class="mp-table">
+            <caption class="mp-visually-hidden">Lighthouse scores per page</caption>
+            <thead>
+              <tr>
+                <th scope="col">Page</th>
+                <th scope="col" class="mp-table__num">
+                  Performance
+                </th>
+                <th scope="col" class="mp-table__num">
+                  Accessibility
+                </th>
+                <th scope="col" class="mp-table__num">
+                  Best practices
+                </th>
+                <th scope="col" class="mp-table__num">
+                  SEO
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {report.lighthouse.map((l) => (
+                <tr>
+                  <th scope="row" class="mp-mono">
+                    {l.path}
+                  </th>
+                  <td class="mp-table__num">{l.performance}</td>
+                  <td class="mp-table__num">{l.accessibility}</td>
+                  <td class="mp-table__num">{l.bestPractices}</td>
+                  <td class="mp-table__num">{l.seo}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      </section>
+    )}
+
+    <section class="mp-section mp-prose" aria-labelledby="why-title">
+      <h2 id="why-title" class="mp-h2">
+        Why bother
+      </h2>
+      <p class="mp-why">
+        A hiring manager looking at a QA engineer's site will look for bugs. Running the same kind
+        of gates I would set up for a team is the most direct way to show how I work: the checks are
+        in the open, in the repository, and anyone can run them.
+      </p>
+    </section>
+
+    <section class="mp-sheet mp-endsheet" aria-label="Contact">
+      <p class="mp-h3">Found a bug on this site? I would like to hear about it.</p>
+      <Actions path="/how-this-site-is-tested" />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .mp-why {
+    margin-block-start: 1.25rem;
+    font-size: 1.125rem;
+  }
+  .mp-endsheet {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    justify-items: start;
+  }
+</style>

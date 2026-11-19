@@ -1,0 +1,21 @@
+---
+// The sheet border's zone numbers (1 to 8, one per grid column) and row letters.
+interface Props {
+  rows?: number;
+}
+const { rows = 4 } = Astro.props;
+const letters = 'ABCDEF'.slice(0, rows).split('');
+---
+
+<div class="mp-zones" aria-hidden="true">
+  <div class="mp-zones__cols">
+    {Array.from({ length: 8 }, (_, i) => (
+      <span>{i + 1}</span>
+    ))}
+  </div>
+  <div class="mp-zones__rows">
+    {letters.map((l) => (
+      <span>{l}</span>
+    ))}
+  </div>
+</div>

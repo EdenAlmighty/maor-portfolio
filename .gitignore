@@ -1,0 +1,34 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# Cloudflare: local state and secrets (names are listed in .dev.vars.example)
+.wrangler/
+.dev.vars
+.env
+.env.*
+
+# test and report output
+test-results/
+playwright-report/
+reports/
+.lighthouseci/
+
+# editors and OS
+.DS_Store
+.vscode/
+.idea/
+
+# impeccable runtime folders (the surface brief and config are committed)
+.impeccable/review/
+.impeccable/questions/
+.impeccable/mocks/
+
+# Maor's original documents: source material, kept out of the public repo
+sources/

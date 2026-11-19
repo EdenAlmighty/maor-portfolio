@@ -1,0 +1,414 @@
+---
+import Base from '../layouts/Base.astro';
+import Actions from '../components/Actions.astro';
+import PathDrawing from '../components/PathDrawing.astro';
+import ProjectRows from '../components/ProjectRows.astro';
+import Todo from '../components/Todo.astro';
+import Zones from '../components/Zones.astro';
+import Icon from '../components/Icon.astro';
+import { getProjects, projectPath } from '../lib/content';
+import { partsList } from '../lib/skills';
+import { report } from '../lib/report';
+import { sheetOf } from '../lib/sheets';
+import { goFrom, site } from '../lib/site';
+
+const projects = await getProjects();
+const featured = projects.filter((p) => p.data.featured);
+const byId = new Map(projects.map((p) => [p.id, p]));
+for (const part of partsList) {
+  for (const id of part.projects) {
+    if (!byId.has(id)) throw new Error(`skills.ts: no project "${id}" for ${part.skill}`);
+  }
+}
+const sheet = sheetOf('/') ?? { n: 1, total: 1, dwg: 'MS-QA-001' };
+const totalFindings = projects.reduce((n, p) => n + p.data.findings.length, 0);
+const title = `${site.name}, ${site.title} in ${site.locality}`;
+---
+
+<Base title={title} description={site.description} pageType="ProfilePage" ogType="profile">
+  <div class="mp-wrap">
+    <section class="mp-sheet mp-hero" aria-labelledby="hero-title">
+      <Zones rows={4} />
+      <h1 id="hero-title" class="mp-h1 mp-hero__title">
+        QA engineer. I test web and mobile apps{' '}
+        <span class="mp-mark mp-mark--sweep">by hand, in code and under load.</span>
+      </h1>
+      <p class="mp-lede mp-hero__lede">
+        Playwright and WebdriverIO automation, API testing with Postman and Bruno, JMeter load
+        tests, and bug reports with steps, expected and actual results, and evidence. Every project
+        below links to its code, test cases and bug reports.
+      </p>
+      <div class="mp-hero__drawing">
+        <PathDrawing />
+      </div>
+      <div class="mp-tb mp-hero__tb">
+        <div class="mp-tb__cell mp-tb__cell--full">
+          <span class="mp-tb__label">Name</span>
+          <span class="mp-tb__value">{site.name}</span>
+        </div>
+        <div class="mp-tb__cell">
+          <span class="mp-tb__label">Role</span>
+          <span class="mp-tb__value">{site.title}</span>
+        </div>
+        <div class="mp-tb__cell">
+          <span class="mp-tb__label">Based in</span>
+          <span class="mp-tb__value">
+            {site.locality}, {site.country}
+          </span>
+        </div>
+        <div class="mp-tb__cell">
+          <span class="mp-tb__label">Sheet</span>
+          <span class="mp-tb__value mp-tb__value--mono">
+            {sheet.n} of {sheet.total}
+          </span>
+        </div>
+        <div class="mp-tb__cell">
+          <span class="mp-tb__label">Dwg no.</span>
+          <span class="mp-tb__value mp-tb__value--mono">{sheet.dwg}</span>
+        </div>
+        <div class="mp-tb__cell mp-tb__cell--full mp-tb__action">
+          <a class="mp-btn mp-btn--primary" href={goFrom('cv', '/')} rel="nofollow">
+            <span>Download my CV</span>
+            <span class="mp-hero__btn-meta">
+              <small>PDF</small>
+              <Icon name="download" />
+            </span>
+          </a>
+        </div>
+        <div class="mp-tb__cell mp-tb__cell--full mp-tb__action">
+          <a class="mp-btn mp-btn--ghost" href={goFrom('email', '/')} rel="nofollow">
+            <span>Email me</span>
+            <span class="mp-hero__btn-meta">
+              <small>{site.email}</small>
+              <Icon name="mail" />
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mp-section" aria-labelledby="work-title">
+      <div class="mp-section__head">
+        <h2 id="work-title" class="mp-h2">
+          Four projects, checked end to end
+        </h2>
+        <a href="/projects">All {projects.length} projects</a>
+      </div>
+      <ProjectRows projects={featured} />
+      <p class="mp-muted mp-section__note">
+        <span class="mp-rev" aria-hidden="true">
+          {totalFindings}
+        </span>
+        The red triangles count defects I reported in public GitHub issues. Bootcamp bug reports
+        live in Jira and Google Drive, linked from each project.
+      </p>
+    </section>
+
+    <section class="mp-section" aria-labelledby="parts-title">
+      <div class="mp-section__head">
+        <h2 id="parts-title" class="mp-h2">
+          Skills, each with the project that shows it
+        </h2>
+        <a href="/cv">Full skills list on the CV</a>
+      </div>
+      <section class="mp-scroll" tabindex="0" aria-label="Skills and the projects that show them">
+        <table class="mp-table mp-parts">
+          <caption class="mp-visually-hidden">Skills and the projects that show them</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="mp-table__num">
+                Item
+              </th>
+              <th scope="col">Skill</th>
+              <th scope="col">Shown in</th>
+            </tr>
+          </thead>
+          <tbody>
+            {partsList.map((part, i) => (
+              <tr>
+                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
+                <th scope="row">
+                  {part.skill}
+                  <span class="mp-parts__detail">{part.detail}</span>
+                </th>
+                <td>
+                  <ul class="mp-parts__links">
+                    {part.projects.map((id) => {
+                      const p = byId.get(id);
+                      if (!p) return null;
+                      return (
+                        <li>
+                          <a href={projectPath(p)}>{p.data.title}</a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section class="mp-section mp-split" aria-labelledby="method-title">
+      <div>
+        <h2 id="method-title" class="mp-h2">
+          How I work
+        </h2>
+        <p class="mp-muted mp-split__aside">
+          The same four steps run through every project on this site, from bootcamp work to client
+          work.
+        </p>
+      </div>
+      <ol class="mp-notes mp-method">
+        <li>
+          <strong>Read the spec first.</strong> Requirements, designs in Figma, API documentation. I
+          write down what the product promises before I touch it.
+        </li>
+        <li>
+          <strong>Plan and write the cases.</strong> A test plan, then test cases with boundary
+          values, equivalence classes, and positive and negative paths.
+        </li>
+        <li>
+          <strong>Test by hand, then automate what repeats.</strong> Exploratory and manual passes
+          find the surprises; Playwright or WebdriverIO keep the known paths checked on every
+          change.
+        </li>
+        <li>
+          <strong>Report so it can be fixed.</strong> A clear title, steps to reproduce, expected
+          and actual results, severity, and screenshots or logs, in Jira or GitHub Issues.
+        </li>
+      </ol>
+    </section>
+
+    {site.quote ? (
+      <section class="mp-section" aria-label="What a developer says">
+        <blockquote class="mp-quote">
+          <p>{site.quote.text}</p>
+          <footer>
+            {site.quote.by}, {site.quote.role}
+          </footer>
+        </blockquote>
+      </section>
+    ) : (
+      <p class="mp-section">
+        <Todo label="Eden's two-sentence quote about the Weather App (optional; the section is left out until then)" />
+      </p>
+    )}
+
+    <section class="mp-section" aria-labelledby="inspect-title">
+      <div class="mp-section__head">
+        <h2 id="inspect-title" class="mp-h2">
+          This site is tested too
+        </h2>
+        <a href="/how-this-site-is-tested">How this site is tested</a>
+      </div>
+      <div class="mp-inspect">
+        <p class="mp-prose">
+          A QA engineer's own site should pass its own checks. Every change to this site runs
+          browser tests, accessibility rules, HTML validation, a broken-link check and a performance
+          budget before it can go live.
+        </p>
+        <dl class="mp-tb mp-inspect__tb">
+          <div class="mp-tb__cell">
+            <dt class="mp-tb__label">Browser tests</dt>
+            <dd class="mp-tb__value mp-tb__value--mono">
+              {report.playwright
+                ? `${report.playwright.passed} of ${report.playwright.total} passed`
+                : 'Run on every change'}
+            </dd>
+          </div>
+          <div class="mp-tb__cell">
+            <dt class="mp-tb__label">Accessibility</dt>
+            <dd class="mp-tb__value mp-tb__value--mono">0 axe violations allowed</dd>
+          </div>
+          <div class="mp-tb__cell">
+            <dt class="mp-tb__label">Lighthouse</dt>
+            <dd class="mp-tb__value mp-tb__value--mono">
+              {report.lighthouse
+                ? `Accessibility ${Math.min(...report.lighthouse.map((l) => l.accessibility))}`
+                : 'Accessibility 100 required'}
+            </dd>
+          </div>
+          <div class="mp-tb__cell">
+            <dt class="mp-tb__label">Last run</dt>
+            <dd class="mp-tb__value mp-tb__value--mono">
+              {report.generatedAt ? report.generatedAt.slice(0, 10) : 'Not run yet'}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="mp-sheet mp-close" aria-labelledby="close-title">
+      <h2 id="close-title" class="mp-h2">
+        {site.rolesWanted ?? 'Looking for my next QA engineer role.'}
+      </h2>
+      <p class="mp-lede">
+        {site.rolesWanted ? null : (
+          <Todo label="Roles: manual, automation or both; level; Israel, remote or both" />
+        )}
+        The fastest way to know if I fit is my CV, or an email.
+      </p>
+      <Actions path="/" profiles />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .mp-hero {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: clamp(1.25rem, 2.5vw, 2rem);
+    align-items: end;
+  }
+  .mp-hero__title {
+    grid-column: 1 / span 7;
+    font-size: clamp(2.25rem, 1.1rem + 4vw, 4.4rem);
+  }
+  .mp-hero__lede {
+    grid-column: 1 / span 4;
+    max-inline-size: 52ch;
+  }
+  .mp-hero__drawing {
+    grid-column: 1 / span 5;
+    padding-block-start: 0.5rem;
+  }
+  .mp-hero__tb {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-column: 6 / span 3;
+    grid-row: 2 / span 2;
+    align-self: end;
+  }
+  .mp-hero__btn-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 0;
+  }
+  .mp-hero__btn-meta small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 60rem) {
+    .mp-hero__title,
+    .mp-hero__lede,
+    .mp-hero__drawing,
+    .mp-hero__tb {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    .mp-hero__tb {
+      order: 3;
+    }
+    .mp-hero__drawing {
+      order: 4;
+    }
+  }
+  .mp-section__note {
+    display: flex;
+    gap: 0.75rem;
+    align-items: start;
+    margin-block-start: 1.25rem;
+    font-size: 0.9375rem;
+    max-inline-size: 70ch;
+  }
+  .mp-parts tbody th {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .mp-parts__detail {
+    font-weight: 400;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+  }
+  .mp-parts__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1.1rem;
+  }
+  .mp-parts__links a {
+    display: inline-block;
+    padding-block: 0.15rem;
+  }
+  .mp-split {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: 1.5rem;
+  }
+  .mp-split > div {
+    grid-column: 1 / span 3;
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+  .mp-split > ol {
+    grid-column: 4 / span 5;
+  }
+  .mp-split__aside {
+    max-inline-size: 32ch;
+  }
+  .mp-method strong {
+    display: block;
+  }
+  @media (max-width: 60rem) {
+    .mp-split > div,
+    .mp-split > ol {
+      grid-column: 1 / -1;
+    }
+  }
+  .mp-quote {
+    margin: 0;
+    max-inline-size: 40ch;
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .mp-quote footer {
+    margin-block-start: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+  .mp-inspect {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: 1.5rem;
+    align-items: start;
+  }
+  .mp-inspect > p {
+    grid-column: 1 / span 4;
+  }
+  .mp-inspect__tb {
+    grid-column: 5 / span 4;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+  }
+  .mp-inspect__tb dd {
+    margin: 0;
+  }
+  @media (max-width: 60rem) {
+    .mp-inspect > p,
+    .mp-inspect__tb {
+      grid-column: 1 / -1;
+    }
+  }
+  .mp-close {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    justify-items: start;
+  }
+  .mp-close .mp-h2 {
+    font-size: clamp(1.9rem, 1.2rem + 2.8vw, 3.4rem);
+    max-inline-size: 20ch;
+  }
+</style>

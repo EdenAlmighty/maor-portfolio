@@ -1,0 +1,304 @@
+---
+// Detail A: Maor's path drawn like a dimensioned part. Stations sit at their true
+// positions along the datum (months since March 2024); thick segments are the time each
+// stage took. Balloons call out each station; src/scripts/ruler.ts draws their leaders.
+import { formatRange, monthSpan } from '../lib/content';
+
+const origin = '2024-03';
+const end = '2026-06';
+const total = monthSpan(origin, end);
+const at = (ym: string) => ((monthSpan(origin, ym) - 1) / total) * 100;
+const len = (a: string, b: string) => (monthSpan(a, b) / total) * 100;
+
+const stations = [
+  {
+    id: 'st-1',
+    start: '2024-03',
+    end: '2024-08',
+    title: 'TripleTen QA bootcamp',
+    line: 'Manual, API, mobile and SQL testing, then my first automation',
+    link: { href: '/projects/urban-routes', label: 'Urban Routes' },
+  },
+  {
+    id: 'st-2',
+    start: '2025-05',
+    end: '2025-06',
+    title: 'First freelance automation',
+    line: '32 Playwright tests and 7 bug reports for a weather app',
+    link: { href: '/projects/weather-app', label: 'Weather App' },
+  },
+  {
+    id: 'st-3',
+    start: '2026-05',
+    end: '2026-06',
+    title: 'A full test effort for a client',
+    line: 'Manual, Playwright, 50 data-driven runs, JMeter, accessibility',
+    link: { href: '/projects/moving-quote-app', label: 'Moving-quote app' },
+  },
+];
+
+// The CSP blocks inline style attributes, so each station's position lives in the
+// stylesheet below. This check fails the build if a date above changes without the CSS.
+const css: [number, number][] = [
+  [0, 21.43],
+  [50, 7.14],
+  [92.86, 7.14],
+];
+stations.forEach((s, i) => {
+  const want = [at(s.start), len(s.start, s.end)].map((v) => Number(v.toFixed(2)));
+  if (want[0] !== css[i][0] || want[1] !== css[i][1]) {
+    throw new Error(`PathDrawing: station ${i + 1} needs --at ${want[0]}% and --len ${want[1]}%`);
+  }
+});
+---
+
+<figure class="mp-path" aria-labelledby="path-caption">
+  <figcaption id="path-caption" class="mp-path__caption">
+    <span class="mp-label">Detail A</span>
+    <span>From bootcamp to client work, {total} months</span>
+  </figcaption>
+  <div class="mp-path__field" data-ruled>
+    <ol class="mp-path__stations">
+      {stations.map((s, i) => (
+        <li class={`mp-path__station mp-path__station--${i + 1}`}>
+          <span class="mp-balloon mp-path__balloon" data-leader={s.id} aria-hidden="true">
+            {i + 1}
+          </span>
+          <span class="mp-path__label">
+            <span class="mp-mono mp-muted">{formatRange(s.start, s.end)}</span>
+            <strong>{s.title}</strong>
+            <span class="mp-path__line">{s.line}</span>
+            <a href={s.link.href}>{s.link.label}</a>
+          </span>
+        </li>
+      ))}
+      {stations.map((s, i) => (
+        <li class={`mp-path__seg mp-path__seg--${i + 1}`} id={s.id} aria-hidden="true" />
+      ))}
+    </ol>
+    <div class="mp-path__dim" aria-hidden="true">
+      <span class="mp-mono">Mar 2024</span>
+      <span class="mp-mono">{total} months</span>
+      <span class="mp-mono">Jun 2026</span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .mp-path {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .mp-path__caption .mp-label {
+    white-space: nowrap;
+  }
+  .mp-path__caption {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+  .mp-path__field {
+    position: relative;
+    padding-block: 3.75rem 0;
+  }
+  .mp-path__field :global(.mp-leaders) {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+    stroke: var(--ink);
+    fill: var(--ink);
+  }
+  .mp-path__stations {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    block-size: 9.5rem;
+    border-block-start: var(--rule) solid var(--line);
+  }
+  .mp-path__station--1,
+  .mp-path__seg--1 {
+    --at: 0%;
+    --len: 21.43%;
+  }
+  .mp-path__station--2,
+  .mp-path__seg--2 {
+    --at: 50%;
+    --len: 7.14%;
+  }
+  .mp-path__station--3,
+  .mp-path__seg--3 {
+    --at: 92.86%;
+    --len: 7.14%;
+  }
+  .mp-path__station {
+    position: absolute;
+    inset-inline-start: var(--at);
+    top: 0;
+  }
+  /* The time a stage took, as a thick segment on the datum line. */
+  .mp-path__seg {
+    position: absolute;
+    top: -2px;
+    inset-inline-start: var(--at);
+    inline-size: max(0.5rem, var(--len));
+    block-size: 3px;
+    background: var(--ink);
+  }
+  .mp-path__balloon {
+    position: absolute;
+    top: -3.4rem;
+    inset-inline-start: -1em;
+  }
+  /* Plain leader without JavaScript: straight down to the datum. */
+  .mp-path__balloon::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: calc(50% - 0.5px);
+    top: 100%;
+    inline-size: 1px;
+    block-size: 1.35rem;
+    background: var(--ink);
+  }
+  .mp-ruled .mp-path__balloon::after {
+    display: none;
+  }
+  /* With the ruling layer the balloons step aside and their leaders angle in. */
+  .mp-ruled .mp-path__station:nth-child(1) .mp-path__balloon {
+    transform: translate(2.2rem, -0.4rem);
+  }
+  .mp-ruled .mp-path__station:nth-child(2) .mp-path__balloon {
+    transform: translate(-2.2rem, -0.1rem);
+  }
+  .mp-ruled .mp-path__station:nth-child(3) .mp-path__balloon {
+    transform: translate(-2.6rem, -0.4rem);
+  }
+  .mp-path__label {
+    position: absolute;
+    top: 0.75rem;
+    inline-size: clamp(11rem, 30cqi, 15rem);
+    display: grid;
+    gap: 0.15rem;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .mp-path__line {
+    color: var(--ink-2);
+  }
+  .mp-path__station:nth-child(2) .mp-path__label {
+    translate: -50% 0;
+  }
+  .mp-path__station:nth-child(3) .mp-path__label {
+    inset-inline-end: 0;
+    text-align: end;
+    justify-items: end;
+  }
+  .mp-path__station:nth-child(3) {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+  }
+  .mp-path__station:nth-child(3) .mp-path__balloon {
+    inset-inline-start: auto;
+    inset-inline-end: -1em;
+  }
+  .mp-path__field {
+    container-type: inline-size;
+  }
+  /* Dimension line: extension lines at both ends, arrowheads, the span in the middle. */
+  .mp-path__dim {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block-start: 0.5rem;
+    padding-inline: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .mp-path__dim::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    border-block-start: var(--rule) solid var(--ink-2);
+    z-index: -1;
+  }
+  .mp-path__dim span {
+    background: var(--paper);
+    padding-inline: 0.4rem;
+  }
+  .mp-path__dim span:first-child,
+  .mp-path__dim span:last-child {
+    position: relative;
+  }
+  .mp-path__dim span:first-child::before,
+  .mp-path__dim span:last-child::after {
+    content: '';
+    position: absolute;
+    top: calc(50% - 4px);
+    border-block: 4px solid transparent;
+  }
+  .mp-path__dim span:first-child::before {
+    inset-inline-start: -0.6rem;
+    border-inline-end: 8px solid var(--ink-2);
+  }
+  .mp-path__dim span:last-child::after {
+    inset-inline-end: -0.6rem;
+    border-inline-start: 8px solid var(--ink-2);
+  }
+
+  /* Narrow screens: the datum turns vertical and the stations stack along it. */
+  @media (max-width: 40rem) {
+    .mp-path__field {
+      padding-block: 0;
+    }
+    .mp-path__field :global(.mp-leaders) {
+      display: none;
+    }
+    .mp-path__stations {
+      block-size: auto;
+      border-block-start: 0;
+      border-inline-start: var(--rule) solid var(--line);
+      display: grid;
+      gap: 1.5rem;
+      padding-inline-start: 1.25rem;
+    }
+    .mp-path__station,
+    .mp-path__station:nth-child(3) {
+      position: relative;
+      inset: auto;
+      display: grid;
+      grid-template-columns: 2.25rem 1fr;
+      gap: 0.5rem;
+    }
+    .mp-path__seg {
+      display: none;
+    }
+    .mp-path__balloon,
+    .mp-path__station:nth-child(n) .mp-path__balloon,
+    .mp-ruled .mp-path__station:nth-child(n) .mp-path__balloon {
+      position: static;
+      transform: none;
+    }
+    .mp-path__balloon::after {
+      display: none;
+    }
+    .mp-path__label,
+    .mp-path__station:nth-child(2) .mp-path__label,
+    .mp-path__station:nth-child(3) .mp-path__label {
+      position: static;
+      inline-size: auto;
+      translate: none;
+      text-align: start;
+      justify-items: start;
+    }
+    .mp-path__dim {
+      display: none;
+    }
+  }
+</style>

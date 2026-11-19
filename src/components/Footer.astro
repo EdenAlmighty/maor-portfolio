@@ -1,0 +1,59 @@
+---
+import { goFrom, site } from '../lib/site';
+import { pagePath } from '../lib/path';
+
+const path = pagePath(Astro.url);
+---
+
+<footer class="mp-footer">
+  <div class="mp-wrap">
+    <div class="mp-tb">
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Name</span>
+        <span class="mp-tb__value">{site.name}</span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Role</span>
+        <span class="mp-tb__value">
+          {site.title}, {site.locality}
+        </span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Email</span>
+        <a class="mp-tb__value" href={goFrom('email', path)} rel="nofollow">
+          {site.email}
+        </a>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Profiles</span>
+        <span class="mp-tb__value">
+          <a href={goFrom('linkedin', path)} rel="nofollow">
+            LinkedIn
+          </a>
+          ,{' '}
+          <a href={goFrom('github', path)} rel="nofollow">
+            GitHub
+          </a>
+        </span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">This site</span>
+        <span class="mp-tb__value">
+          <a href="/how-this-site-is-tested">How it is tested</a>, <a href={site.repo}>its code</a>
+        </span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Statements</span>
+        <span class="mp-tb__value">
+          <a href="/accessibility">Accessibility</a>, <a href="/privacy">Privacy</a>
+        </span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Last updated</span>
+        <span class="mp-tb__value mp-tb__value--mono">
+          <time datetime={site.updated}>{site.updated}</time>
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,75 @@
+---
+// The reference documents of a project: links to its code, bug reports and test
+// documents. A document that is not public yet shows as a TODO, never as a dead link.
+import Icon from './Icon.astro';
+import Todo from './Todo.astro';
+
+interface Props {
+  items: { label: string; href?: string; missing?: string }[];
+}
+const { items } = Astro.props;
+const host = (href: string) => new URL(href).hostname.replace(/^www\./, '');
+---
+
+<ul class="mp-evidence">
+  {items.map((e) => (
+    <li>
+      {e.href ? (
+        <a href={e.href}>
+          <Icon name="doc" />
+          <span>
+            {e.label}
+            <span class="mp-evidence__host">{host(e.href)}</span>
+          </span>
+        </a>
+      ) : (
+        <span class="mp-evidence__missing">
+          <Icon name="doc" />
+          <span>
+            {e.label} <Todo label={e.missing ?? 'link not public yet'} />
+          </span>
+        </span>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .mp-evidence {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    border-block-start: var(--rule) solid var(--line-2);
+  }
+  .mp-evidence li {
+    border-block-end: var(--rule) solid var(--line-2);
+  }
+  .mp-evidence a,
+  .mp-evidence__missing {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: 0.75rem;
+    padding-block: 0.7rem;
+    min-height: var(--touch);
+    align-items: start;
+  }
+  .mp-evidence a {
+    text-decoration: none;
+  }
+  .mp-evidence a:hover > span:last-child {
+    text-decoration: underline;
+  }
+  .mp-evidence :global(svg) {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-block-start: 0.1rem;
+  }
+  .mp-evidence__host {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+// The top of every inner page: a sheet with the page's heading on the left and its
+// title block locked to the lower right corner, as on every drawing.
+import Zones from './Zones.astro';
+import { sheetOf } from '../lib/sheets';
+import { site } from '../lib/site';
+
+interface Props {
+  title: string;
+  path: string;
+  /** Extra title-block cells for this page (client, dates, role...). */
+  cells?: { label: string; value: string; wide?: boolean; mono?: boolean }[];
+}
+const { title, path, cells = [] } = Astro.props;
+const sheet = sheetOf(path);
+---
+
+<div class="mp-wrap">
+  <section class="mp-sheet mp-pagesheet" aria-labelledby="page-title">
+    <Zones rows={3} />
+    <div class="mp-pagesheet__text">
+      <slot name="before" />
+      <h1 id="page-title" class="mp-h1">
+        {title}
+      </h1>
+      <div class="mp-pagesheet__lede">
+        <slot />
+      </div>
+    </div>
+    <div class="mp-tb mp-pagesheet__tb">
+      {cells.map((c) => (
+        <div class:list={['mp-tb__cell', c.wide && 'mp-tb__cell--wide']}>
+          <span class="mp-tb__label">{c.label}</span>
+          <span class:list={['mp-tb__value', c.mono && 'mp-tb__value--mono']}>{c.value}</span>
+        </div>
+      ))}
+      <div class="mp-tb__cell mp-tb__cell--wide">
+        <span class="mp-tb__label">Checked by</span>
+        <span class="mp-tb__value">{site.name}</span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Sheet</span>
+        <span class="mp-tb__value mp-tb__value--mono">
+          {sheet ? `${sheet.n} of ${sheet.total}` : 'Note'}
+        </span>
+      </div>
+      <div class="mp-tb__cell">
+        <span class="mp-tb__label">Dwg no.</span>
+        <span class="mp-tb__value mp-tb__value--mono">{sheet?.dwg ?? 'MS-QA-N'}</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .mp-pagesheet {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 2rem clamp(0.75rem, 2vw, 1.5rem);
+    align-items: end;
+  }
+  .mp-pagesheet__text {
+    grid-column: 1 / span 5;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .mp-pagesheet__lede {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .mp-pagesheet__tb {
+    grid-column: 6 / span 3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (max-width: 60rem) {
+    .mp-pagesheet__text,
+    .mp-pagesheet__tb {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

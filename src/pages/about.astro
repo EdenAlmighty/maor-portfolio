@@ -1,0 +1,171 @@
+---
+import Base from '../layouts/Base.astro';
+import Actions from '../components/Actions.astro';
+import PageSheet from '../components/PageSheet.astro';
+import Todo from '../components/Todo.astro';
+import { education, history } from '../data/cv';
+import { site } from '../lib/site';
+
+const description =
+  'Maor Matthew Shaer, QA engineer in Tel Aviv: from caregiving to a TripleTen QA certificate in 2024, then freelance test automation and client work.';
+---
+
+<Base
+  title={`About ${site.name}, QA engineer`}
+  description={description}
+  pageType="ProfilePage"
+  ogType="profile"
+  crumbs={[{ name: 'About', path: '/about' }]}
+>
+  <PageSheet
+    title="I came to testing from five years of caregiving."
+    path="/about"
+    cells={[
+      { label: 'Based in', value: `${site.locality}, ${site.country}`, wide: true },
+      { label: 'Certificate', value: 'TripleTen QA', wide: true },
+    ]}
+  >
+    <p class="mp-lede">
+      I am {site.name}, a QA engineer in {site.locality}. I test web and mobile apps, write the
+      documents that make testing repeatable, and automate the checks worth repeating.
+    </p>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <div class="mp-about">
+      <section class="mp-prose mp-about__story" aria-labelledby="path-title">
+        <h2 id="path-title" class="mp-h2">
+          The path
+        </h2>
+        <p>
+          From 2020 to the end of 2024 I worked as an elderly care provider in Tel Aviv. Caregiving
+          taught me to communicate clearly and to see things from the other person's side. In
+          testing, that person is the user.
+        </p>
+        <p>
+          In 2023 I taught myself HTML, CSS and JavaScript and built small front-end projects, many
+          of them by following tutorials; they are still on my <a href={site.github}>GitHub</a>. In
+          March 2024 I joined the TripleTen QA engineering bootcamp, and finished it in August.
+        </p>
+        <p>
+          Since then I have tested on my own: practice projects in Postman, JMeter and Katalon
+          Studio, a Playwright course, then a freelance automation project for a weather app in
+          2025, and a full test effort for a moving company's quote form in 2026, from the test plan
+          to the load test.
+        </p>
+        <p>
+          Before all of that I served in base security in the IDF, and worked in an office mail
+          service in New York City.
+        </p>
+      </section>
+
+      <aside class="mp-about__aside">
+        <section aria-labelledby="history-title">
+          <h2 id="history-title" class="mp-h3">
+            Work history
+          </h2>
+          <table class="mp-table">
+            <caption class="mp-visually-hidden">Work history and education</caption>
+            <tbody>
+              <tr>
+                <th scope="row">
+                  {education.title}
+                  <span class="mp-about__sub">{education.org}</span>
+                </th>
+                <td class="mp-table__num">{education.dates.replace(' to ', '–')}</td>
+              </tr>
+              {history.map((h) => (
+                <tr>
+                  <th scope="row">
+                    {h.role}
+                    <span class="mp-about__sub">
+                      {h.org}, {h.place}
+                    </span>
+                  </th>
+                  <td class="mp-table__num">{h.dates.replace(' to ', '–')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section aria-labelledby="lang-title">
+          <h2 id="lang-title" class="mp-h3">
+            Languages
+          </h2>
+          {site.languages ? (
+            <ul class="mp-about__langs">
+              {site.languages.map((l) => (
+                <li>
+                  {l.language}: {l.level}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Todo label="Languages Maor speaks, and how well" />
+          )}
+        </section>
+      </aside>
+    </div>
+
+    <section class="mp-sheet mp-endsheet" aria-labelledby="next-title">
+      <h2 id="next-title" class="mp-h2">
+        What I am looking for
+      </h2>
+      <p class="mp-lede">
+        {site.rolesWanted ?? 'Open to QA engineer roles.'}
+        {!site.rolesWanted && (
+          <Todo label="Roles: manual, automation or both; level; Israel, remote or both" />
+        )}
+      </p>
+      <Actions path="/about" profiles />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .mp-about {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: 3rem;
+    padding-block-start: clamp(2rem, 5vw, 4rem);
+  }
+  .mp-about__story {
+    grid-column: 1 / span 5;
+    font-size: 1.125rem;
+  }
+  .mp-about__story h2 {
+    margin-block-end: 1.25rem;
+  }
+  .mp-about__aside {
+    grid-column: 6 / span 3;
+    display: grid;
+    gap: 2.5rem;
+    align-content: start;
+  }
+  .mp-about__aside h2 {
+    margin-block-end: 0.75rem;
+  }
+  .mp-about__sub {
+    display: block;
+    font-weight: 400;
+    font-size: 0.8125rem;
+    color: var(--ink-2);
+  }
+  .mp-about__langs {
+    padding-inline-start: 1.1rem;
+  }
+  @media (max-width: 60rem) {
+    .mp-about__story,
+    .mp-about__aside {
+      grid-column: 1 / -1;
+    }
+  }
+  .mp-endsheet {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    justify-items: start;
+  }
+</style>

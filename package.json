@@ -1,0 +1,64 @@
+{
+  "name": "maor-portfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:todos": "node scripts/check-todos.mjs",
+    "check:launch": "node scripts/check-todos.mjs --strict",
+    "check:budget": "node scripts/check-budget.mjs",
+    "check:html": "html-validate \"dist/client/**/*.html\"",
+    "check:links": "node scripts/check-links.mjs",
+    "check:evidence": "node scripts/check-evidence.mjs",
+    "check:agentic": "node scripts/check-agentic.mjs",
+    "test": "playwright test",
+    "verify": "npm run lint && npm run format:check && npm run check && npm run build && npm run check:html && npm run check:links && npm run check:budget && npm run test",
+    "generate-types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply maor-portfolio --local",
+    "db:migrate:remote": "wrangler d1 migrations apply maor-portfolio --remote",
+    "clicks": "wrangler d1 execute maor-portfolio --command \"SELECT target, page, referrer_host, ai_source, count(*) AS clicks FROM clicks GROUP BY 1,2,3,4 ORDER BY clicks DESC\"",
+    "og": "node scripts/og.mjs",
+    "cv:pdf": "node scripts/cv-pdf.mjs",
+    "test-report": "node scripts/test-report.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
+    "icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.3.3",
+    "@astrojs/sitemap": "3.7.4",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.3.5",
+    "tailwindcss": "4.3.3"
+  },
+  "allowScripts": {
+    "esbuild": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@types/node": "24.19.1",
+    "eslint": "10.12.0",
+    "eslint-plugin-astro": "3.2.1",
+    "globals": "17.13.0",
+    "html-validate": "11.16.2",
+    "linkinator": "8.1.0",
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.0",
+    "wrangler": "4.147.0"
+  }
+}

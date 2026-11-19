@@ -1,0 +1,356 @@
+---
+// The CV as a web page. scripts/cv-pdf.mjs prints this page to the PDF that "Download my
+// CV" serves, adding the phone number, which appears on no web page.
+import Base from '../layouts/Base.astro';
+import Actions from '../components/Actions.astro';
+import { education, history, skills, summary } from '../data/cv';
+import { clientLabel, formatRange, getProjects, projectPath } from '../lib/content';
+import { kindLabels } from '../lib/labels';
+import { site } from '../lib/site';
+
+const projects = await getProjects();
+const groups = [
+  {
+    title: 'Freelance projects',
+    items: projects.filter((p) => p.data.kind === 'freelance'),
+    bullets: 4,
+  },
+  {
+    title: 'TripleTen bootcamp projects',
+    note: 'Tel Aviv, March to August 2024',
+    items: projects.filter((p) => p.data.kind === 'bootcamp'),
+    bullets: 2,
+  },
+  {
+    title: 'Practice and course projects',
+    items: projects.filter((p) => p.data.kind === 'practice' || p.data.kind === 'course'),
+    bullets: 1,
+  },
+];
+const host = new URL(site.url).host;
+const description =
+  'The CV of Maor Matthew Shaer, QA engineer in Tel Aviv: skills, freelance and bootcamp testing projects, work history and education, with a PDF download.';
+---
+
+<Base
+  title={`${site.name} CV, QA Engineer`}
+  description={description}
+  pageType="ProfilePage"
+  ogType="profile"
+  crumbs={[{ name: 'CV', path: '/cv' }]}
+>
+  <div class="mp-wrap">
+    <article class="mp-sheet mp-cv" aria-labelledby="cv-name">
+      <header class="mp-cv__head">
+        <div>
+          <h1 id="cv-name" class="mp-h1 mp-cv__name">
+            {site.name}
+          </h1>
+          <p class="mp-cv__title">{site.title}</p>
+        </div>
+        <ul class="mp-cv__contact">
+          <li>
+            {site.locality}, {site.country}
+          </li>
+          <li>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </li>
+          <li data-phone hidden></li>
+          <li>
+            <a href={site.linkedin}>LinkedIn</a>
+          </li>
+          <li>
+            <a href={site.github}>github.com/{site.githubHandle}</a>
+          </li>
+          <li>
+            <a href={site.url}>{host}</a>
+          </li>
+        </ul>
+      </header>
+
+      <div class="mp-cv__actions">
+        <Actions path="/cv" />
+      </div>
+
+      <section class="mp-cv__block" aria-labelledby="cv-summary">
+        <h2 id="cv-summary" class="mp-cv__h">
+          Summary
+        </h2>
+        <p class="mp-cv__summary">{summary}</p>
+      </section>
+
+      <section class="mp-cv__block" aria-labelledby="cv-skills">
+        <h2 id="cv-skills" class="mp-cv__h">
+          Skills
+        </h2>
+        <dl class="mp-cv__skills">
+          {skills.map((s) => (
+            <div>
+              <dt>{s.group}</dt>
+              <dd>{s.items.join(', ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section class="mp-cv__block" aria-labelledby="cv-projects">
+        <h2 id="cv-projects" class="mp-cv__h">
+          Experience and projects
+        </h2>
+        {groups.map((g) => (
+          <div class="mp-cv__group">
+            <h3 class="mp-cv__gh">
+              {g.title}
+              {g.note && <span class="mp-muted"> ({g.note})</span>}
+            </h3>
+            {g.items.map((p) => (
+              <div class="mp-cv__item">
+                <div class="mp-cv__itemhead">
+                  <h4>
+                    <a href={`${site.url}${projectPath(p)}`}>{p.data.title}</a>
+                    {clientLabel(p) && <span class="mp-muted">, {clientLabel(p)}</span>}
+                    {g.title.startsWith('Practice') && (
+                      <span class="mp-muted">, {kindLabels[p.data.kind].toLowerCase()}</span>
+                    )}
+                  </h4>
+                  <span class="mp-mono mp-muted">{formatRange(p.data.start, p.data.end)}</span>
+                </div>
+                <ul>
+                  {p.data.notes.slice(0, g.bullets).map((n) => (
+                    <li>{n}</li>
+                  ))}
+                </ul>
+                <p class="mp-cv__tools">{p.data.tools.join(', ')}</p>
+              </div>
+            ))}
+          </div>
+        ))}
+      </section>
+
+      <section class="mp-cv__block" aria-labelledby="cv-history">
+        <h2 id="cv-history" class="mp-cv__h">
+          Work history
+        </h2>
+        {history.map((h) => (
+          <div class="mp-cv__itemhead">
+            <p>
+              <strong>{h.role}</strong>, {h.org}, {h.place}
+            </p>
+            <span class="mp-mono mp-muted">{h.dates}</span>
+          </div>
+        ))}
+      </section>
+
+      <section class="mp-cv__block" aria-labelledby="cv-education">
+        <h2 id="cv-education" class="mp-cv__h">
+          Education
+        </h2>
+        <div class="mp-cv__itemhead">
+          <p>
+            <strong>{education.title}</strong>, {education.org}, {education.place}
+          </p>
+          <span class="mp-mono mp-muted">{education.dates}</span>
+        </div>
+      </section>
+    </article>
+  </div>
+</Base>
+
+<style>
+  .mp-cv {
+    display: grid;
+    gap: 2rem;
+    max-inline-size: 60rem;
+  }
+  .mp-cv__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    padding-block-end: 1.5rem;
+    border-block-end: var(--rule) solid var(--line);
+  }
+  .mp-cv__name {
+    font-size: clamp(2.1rem, 1.4rem + 2.6vw, 3.4rem);
+  }
+  .mp-cv__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-block-start: 0.4rem;
+  }
+  .mp-cv__contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.15rem;
+    font-size: 0.9375rem;
+    align-content: start;
+  }
+  .mp-cv__contact a {
+    display: inline-block;
+    padding-block: 0.1rem;
+  }
+  /* The heading spans every row of its block; row-gap 0 keeps the unused rows empty. */
+  .mp-cv__block {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 0 2rem;
+  }
+  .mp-cv__block > :not(.mp-cv__h) + :not(.mp-cv__h) {
+    margin-block-start: 0.5rem;
+  }
+  .mp-cv__block > :not(.mp-cv__h) {
+    grid-column: 2;
+  }
+  .mp-cv__h {
+    grid-column: 1;
+    grid-row: 1 / span 20;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    padding-block-start: 0.3rem;
+  }
+  .mp-cv__summary {
+    max-inline-size: var(--measure);
+  }
+  .mp-cv__skills {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .mp-cv__skills div {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 1rem;
+  }
+  .mp-cv__skills dt {
+    font-weight: 700;
+  }
+  .mp-cv__skills dd {
+    margin: 0;
+  }
+  .mp-cv__group {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-end: 1.75rem;
+  }
+  .mp-cv__gh {
+    font-size: 1.0625rem;
+    letter-spacing: 0;
+  }
+  .mp-cv__item {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .mp-cv__itemhead {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    align-items: baseline;
+  }
+  .mp-cv__itemhead h4 {
+    font-weight: 700;
+  }
+  .mp-cv__itemhead h4 a {
+    text-decoration: none;
+  }
+  .mp-cv__itemhead h4 a:hover {
+    text-decoration: underline;
+  }
+  .mp-cv__item ul {
+    list-style: square;
+    padding-inline-start: 1.1rem;
+    display: grid;
+    gap: 0.2rem;
+  }
+  .mp-cv__tools {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+  @media (max-width: 40rem) {
+    .mp-cv__block,
+    .mp-cv__skills div {
+      grid-template-columns: 1fr;
+    }
+    .mp-cv__block > :not(.mp-cv__h),
+    .mp-cv__h {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+</style>
+
+<style is:global>
+  /* The PDF (scripts/cv-pdf.mjs) is this page printed on A4, always in the light theme. */
+  @media print {
+    @page {
+      size: A4;
+      margin: 13mm 14mm;
+    }
+    :root {
+      --paper: #fff;
+      --ink: #111820;
+      --ink-2: #47515a;
+      --line: #111820;
+      --line-2: #a3acb2;
+      color-scheme: light;
+    }
+    html {
+      font-size: 9.6pt;
+      background: #fff;
+      scroll-padding-top: 0;
+    }
+    .mp-header,
+    .mp-footer,
+    .mp-skip,
+    .mp-cv__actions,
+    .mp-todo {
+      display: none !important;
+    }
+    .mp-wrap {
+      padding: 0;
+      max-width: none;
+    }
+    .mp-sheet.mp-cv {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      gap: 1.1rem;
+      max-inline-size: none;
+    }
+    .mp-cv__name {
+      font-size: 2.3rem;
+    }
+    /* One column in print: grids with spanning rows do not break across pages well,
+       and a single column reads better in applicant tracking systems. */
+    .mp-cv__block {
+      display: block;
+    }
+    .mp-cv__h {
+      margin-block-end: 0.35rem;
+      padding-block-start: 0;
+    }
+    .mp-cv__skills div {
+      grid-template-columns: 9rem 1fr;
+    }
+    .mp-cv__group {
+      gap: 0.6rem;
+      margin-block-end: 0.8rem;
+    }
+    .mp-cv__item {
+      break-inside: avoid;
+      gap: 0.15rem;
+    }
+    .mp-cv__item ul {
+      gap: 0.05rem;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+</style>

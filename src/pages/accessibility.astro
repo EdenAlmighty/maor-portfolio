@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import PageSheet from '../components/PageSheet.astro';
+import { site } from '../lib/site';
+---
+
+<Base
+  title="Accessibility statement"
+  description="Accessibility statement for Maor Matthew Shaer's portfolio: the standard it targets, how it is tested, known gaps and how to report a problem."
+  crumbs={[{ name: 'Accessibility', path: '/accessibility' }]}
+>
+  <PageSheet
+    title="Accessibility statement"
+    path="/accessibility"
+    cells={[{ label: 'Updated', value: site.updated, mono: true, wide: true }]}
+  >
+    <p class="mp-lede">
+      This site aims to meet WCAG 2.2 at level AA, the standard behind Israeli Standard 5568.
+    </p>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <div class="mp-statement mp-prose">
+      <h2 class="mp-h3">How it is tested</h2>
+      <ul>
+        <li>
+          Every page is checked with axe on a phone and a desktop profile on every change, and the
+          change is blocked if any rule fails.
+        </li>
+        <li>Lighthouse must score 100 for accessibility on every page.</li>
+        <li>Every page works with JavaScript turned off and with reduced motion.</li>
+        <li>A keyboard and NVDA screen reader pass by hand is part of the launch checklist.</li>
+      </ul>
+
+      <h2 class="mp-h3">What you can expect</h2>
+      <ul>
+        <li>Text contrast of at least 4.5:1, in the light and the dark theme.</li>
+        <li>A visible focus indicator on every link and button, and a skip link to the content.</li>
+        <li>
+          Tables with real headers, headings in order, and no information given by colour alone.
+        </li>
+        <li>Pages that work from 320 px wide and zoom to 400% without sideways scrolling.</li>
+      </ul>
+
+      <h2 class="mp-h3">Known gaps</h2>
+      <p>
+        Some project evidence lives on other sites (GitHub, Google Drive and Google Sheets). Their
+        accessibility is outside this site's control.
+      </p>
+
+      <h2 class="mp-h3">Report a problem</h2>
+      <p>
+        Email <a href={`mailto:${site.email}`}>{site.email}</a> with the page and what went wrong.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .mp-statement {
+    padding-block-start: clamp(2rem, 5vw, 4rem);
+    display: grid;
+    gap: 0.75rem;
+  }
+  .mp-statement h2 {
+    margin-block-start: 1.5rem;
+  }
+  .mp-statement ul {
+    padding-inline-start: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+</style>

@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Disallow: /go/
+
+# AI search and user-requested fetches
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+Disallow: /go/
+
+# AI training (allowed: helps future models learn who Maor Matthew Shaer is)
+# To block training instead, change Allow: / to Disallow: / in this group only.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /go/
+
+Sitemap: https://maorshaer.com/sitemap-index.xml

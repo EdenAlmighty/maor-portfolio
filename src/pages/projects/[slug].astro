@@ -1,0 +1,265 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Actions from '../../components/Actions.astro';
+import Evidence from '../../components/Evidence.astro';
+import PageSheet from '../../components/PageSheet.astro';
+import { kindLabels, typeLabels } from '../../lib/labels';
+import { clientLabel, formatRange, getProjects, type Project } from '../../lib/content';
+import { projectNode } from '../../lib/schema';
+import { site } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const featured = (await getProjects()).filter((p) => p.data.featured);
+  return featured.map((p, i) => ({
+    params: { slug: p.id },
+    props: {
+      project: p,
+      prev: featured[i - 1] ?? null,
+      next: featured[i + 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  project: Project;
+  prev: Project | null;
+  next: Project | null;
+}
+const { project, prev, next } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+const path = `/projects/${project.id}`;
+const client = clientLabel(project);
+const metaTitle = `${d.title}: a QA case study by ${site.shortName}`;
+const cells = [
+  ...(client ? [{ label: 'Client', value: client, wide: true }] : []),
+  { label: 'Kind', value: kindLabels[d.kind] },
+  { label: 'Dates', value: formatRange(d.start, d.end), mono: true },
+  { label: 'Role', value: d.role, wide: true },
+];
+---
+
+<Base
+  title={metaTitle.length <= 60 ? metaTitle : `${d.title}, QA case study`}
+  description={d.description}
+  ogType="article"
+  crumbs={[
+    { name: 'Projects', path: '/projects' },
+    { name: d.title, path },
+  ]}
+  schema={[
+    projectNode({
+      title: d.title,
+      description: d.description,
+      url: `${site.url}${path}`,
+      start: d.start,
+      end: d.end,
+      tools: d.tools,
+    }),
+  ]}
+>
+  <PageSheet title={d.title} path={path} cells={cells}>
+    <a slot="before" class="mp-back" href="/projects">
+      All projects
+    </a>
+    <p class="mp-lede">{d.summary}</p>
+    <ul class="mp-tags" aria-label="Testing types">
+      {d.types.map((t) => (
+        <li>{typeLabels[t]}</li>
+      ))}
+    </ul>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <div class="mp-case">
+      <div class="mp-case__main">
+        <section class="mp-case__story mp-prose" aria-label="Summary">
+          <Content />
+        </section>
+
+        <section aria-labelledby="method-title">
+          <h2 id="method-title" class="mp-h2 mp-case__h">
+            What I tested, and how
+          </h2>
+          <ol class="mp-notes">
+            {d.notes.map((n) => (
+              <li>{n}</li>
+            ))}
+          </ol>
+        </section>
+
+        {d.findings.length > 0 && (
+          <section aria-labelledby="findings-title">
+            <h2 id="findings-title" class="mp-h2 mp-case__h">
+              Defects I reported
+            </h2>
+            <section class="mp-scroll" tabindex="0" aria-label="Revision table: defects reported">
+              <table class="mp-table mp-findings">
+                <caption class="mp-visually-hidden">Revision table: defects reported</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Rev</th>
+                    <th scope="col">Defect</th>
+                    <th scope="col" class="mp-table__num">
+                      Test case
+                    </th>
+                    <th scope="col">Report</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.findings.map((f) => (
+                    <tr id={`defect-${f.id}`}>
+                      <td>
+                        <span class="mp-rev">{f.id}</span>
+                      </td>
+                      <th scope="row">{f.title}</th>
+                      <td class="mp-table__num">{f.test ?? ''}</td>
+                      <td>
+                        <a href={f.href}>Issue #{f.id}</a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          </section>
+        )}
+      </div>
+
+      <aside class="mp-case__aside" aria-labelledby="evidence-title">
+        <h2 id="evidence-title" class="mp-h3">
+          Reference documents
+        </h2>
+        <Evidence items={d.evidence} />
+        <h2 class="mp-h3">Tools</h2>
+        <ul class="mp-tags" aria-label="Tools">
+          {d.tools.map((t) => (
+            <li>{t}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+
+    <nav class="mp-pager" aria-label="Case studies">
+      {prev ? (
+        <a href={`/projects/${prev.id}`} rel="prev">
+          <span class="mp-label">Previous sheet</span>
+          <span>{prev.data.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next ? (
+        <a href={`/projects/${next.id}`} rel="next">
+          <span class="mp-label">Next sheet</span>
+          <span>{next.data.title}</span>
+        </a>
+      ) : (
+        <a href="/projects">
+          <span class="mp-label">Back to</span>
+          <span>All projects</span>
+        </a>
+      )}
+    </nav>
+
+    <section class="mp-sheet mp-endsheet" aria-label="Contact">
+      <p class="mp-h3">If this is the kind of testing your team needs, my CV has the rest.</p>
+      <Actions path={path} />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .mp-back {
+    font-size: 0.9375rem;
+    justify-self: start;
+    min-height: var(--touch);
+    display: inline-flex;
+    align-items: center;
+  }
+  .mp-case {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: clamp(0.75rem, 2vw, 1.5rem);
+    row-gap: 3rem;
+    padding-block-start: clamp(2rem, 5vw, 4rem);
+  }
+  .mp-case__main {
+    grid-column: 1 / span 5;
+    min-inline-size: 0;
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    align-content: start;
+  }
+  /* Grid items default to their content's width; the defects table scrolls instead. */
+  .mp-case__main > * {
+    min-inline-size: 0;
+  }
+  .mp-case__story {
+    font-size: 1.1875rem;
+    line-height: 1.6;
+  }
+  .mp-case__story :global(p + p) {
+    margin-block-start: 1em;
+  }
+  .mp-case__h {
+    font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+    margin-block-end: 1.25rem;
+  }
+  .mp-case__aside {
+    grid-column: 6 / span 3;
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    position: sticky;
+    top: 5rem;
+  }
+  .mp-case__aside .mp-h3 + :global(*) {
+    margin-block-end: 1rem;
+  }
+  @media (max-width: 60rem) {
+    .mp-case__main,
+    .mp-case__aside {
+      grid-column: 1 / -1;
+      position: static;
+    }
+  }
+  .mp-findings th[scope='row'] {
+    font-weight: 400;
+    min-inline-size: 16rem;
+  }
+  .mp-findings td:last-child {
+    white-space: nowrap;
+  }
+  .mp-findings tr:target {
+    background: var(--paper-2);
+  }
+  .mp-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-block-start: clamp(3rem, 7vw, 5rem);
+    border-block: var(--rule) solid var(--line);
+  }
+  .mp-pager a {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: 1rem;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .mp-pager a:hover span:last-child {
+    text-decoration: underline;
+  }
+  .mp-pager a[rel='next'],
+  .mp-pager a:last-child {
+    text-align: end;
+  }
+  .mp-endsheet {
+    display: grid;
+    gap: 1.25rem;
+    margin-block-start: clamp(4rem, 9vw, 7rem);
+    justify-items: start;
+  }
+</style>

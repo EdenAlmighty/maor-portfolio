@@ -1,0 +1,53 @@
+---
+// The two actions every page ends with: the CV first, email second. Both go through
+// /go/ so each click is counted.
+import Icon from './Icon.astro';
+import { goFrom, site } from '../lib/site';
+
+interface Props {
+  path: string;
+  /** Show LinkedIn and GitHub as plain links after the buttons. */
+  profiles?: boolean;
+}
+const { path, profiles = false } = Astro.props;
+---
+
+<div class="mp-actions">
+  <a class="mp-btn mp-btn--primary" href={goFrom('cv', path)} rel="nofollow">
+    <Icon name="download" />
+    Download my CV <small>PDF</small>
+  </a>
+  <a class="mp-btn mp-btn--ghost" href={goFrom('email', path)} rel="nofollow">
+    <Icon name="mail" />
+    Email me
+  </a>
+  {profiles && (
+    <p class="mp-actions__profiles">
+      <a href={goFrom('linkedin', path)} rel="nofollow">
+        LinkedIn
+      </a>
+      <a href={goFrom('github', path)} rel="nofollow">
+        GitHub <span class="mp-mono">@{site.githubHandle}</span>
+      </a>
+    </p>
+  )}
+</div>
+
+<style>
+  .mp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .mp-actions__profiles {
+    display: flex;
+    gap: 1.25rem;
+    margin-inline-start: 0.5rem;
+  }
+  .mp-actions__profiles a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+  }
+</style>

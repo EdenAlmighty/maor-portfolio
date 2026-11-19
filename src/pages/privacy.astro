@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import PageSheet from '../components/PageSheet.astro';
+import { site } from '../lib/site';
+---
+
+<Base
+  title="Privacy"
+  description="Privacy on Maor Matthew Shaer's portfolio: no forms, no cookies, cookieless analytics, and click counts with no personal data."
+  crumbs={[{ name: 'Privacy', path: '/privacy' }]}
+>
+  <PageSheet
+    title="Privacy"
+    path="/privacy"
+    cells={[{ label: 'Updated', value: site.updated, mono: true, wide: true }]}
+  >
+    <p class="mp-lede">This site has no forms, sets no cookies and shows no ads.</p>
+  </PageSheet>
+
+  <div class="mp-wrap">
+    <div class="mp-statement mp-prose">
+      <h2 class="mp-h3">What is collected</h2>
+      <ul>
+        <li>
+          <strong>Page views.</strong> Cloudflare Web Analytics counts visits without cookies and
+          without identifying you.
+        </li>
+        <li>
+          <strong>Clicks on the CV, email, LinkedIn and GitHub links.</strong> The link passes
+          through this site first, which stores the time, the page you clicked on, and the website
+          that sent you here (for example linkedin.com). No IP address, no browser details, nothing
+          that identifies you. These counts are kept for 12 months.
+        </li>
+      </ul>
+
+      <h2 class="mp-h3">Where it is stored</h2>
+      <p>
+        On Cloudflare, which hosts the site. If you email me, your message is in my Gmail inbox and
+        nowhere else.
+      </p>
+
+      <h2 class="mp-h3">Questions</h2>
+      <p>
+        Email <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .mp-statement {
+    padding-block-start: clamp(2rem, 5vw, 4rem);
+    display: grid;
+    gap: 0.75rem;
+  }
+  .mp-statement h2 {
+    margin-block-start: 1.5rem;
+  }
+  .mp-statement ul {
+    padding-inline-start: 1.2rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+</style>
