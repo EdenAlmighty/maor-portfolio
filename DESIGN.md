@@ -75,6 +75,11 @@ One family with two voices, self-hosted, Latin subset, SIL OFL (`public/fonts/OF
   whole word in dark mode.
 - **Drawing list and parts list** (`.mp-table`): real tables with header cells, tabular
   numbers, scroll inside `.mp-scroll` on narrow screens.
+- **Tables on phones** (`.mp-table--stack`): under 40rem each row becomes a block: its number
+  in a narrow first column, the row heading, then each secondary cell under a small mono
+  label. No table scrolls sideways on a phone.
+- **Touch targets**: every link or button that is not inside a sentence is at least 44px tall
+  (`tests/mobile.spec.ts`). On phones the closing buttons are full width.
 - **Notes** (`.mp-notes`): numbered general notes for method steps.
 - **Buttons**: primary is solid ink; ghost is outlined. Hover fills both with highlighter.
 

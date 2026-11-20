@@ -20,13 +20,19 @@ import Actions from '../components/Actions.astro';
       <p class="mp-lede">The link may be old or mistyped. Try one of these instead:</p>
       <ul class="mp-404__links">
         <li>
-          <a href="/projects">All projects</a>
+          <a class="mp-target" href="/projects">
+            All projects
+          </a>
         </li>
         <li>
-          <a href="/cv">The CV</a>
+          <a class="mp-target" href="/cv">
+            The CV
+          </a>
         </li>
         <li>
-          <a href="/">The home page</a>
+          <a class="mp-target" href="/">
+            The home page
+          </a>
         </li>
       </ul>
       <Actions path="/404" />

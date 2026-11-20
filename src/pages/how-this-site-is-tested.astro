@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Actions from '../components/Actions.astro';
 import PageSheet from '../components/PageSheet.astro';
-import { report, suiteLabels } from '../lib/report';
+import { israelDate, report, suiteLabels } from '../lib/report';
 import { site } from '../lib/site';
 
 const gates = [
@@ -76,7 +76,7 @@ const description =
       { label: 'Gates', value: String(gates.length), mono: true },
       {
         label: 'Last run',
-        value: report.generatedAt ? report.generatedAt.slice(0, 10) : 'Not yet',
+        value: report.generatedAt ? israelDate(report.generatedAt) : 'Not yet',
         mono: true,
       },
     ]}
@@ -97,25 +97,39 @@ const description =
         <a href={site.repo}>The code and the tests</a>
       </div>
       <section class="mp-scroll" tabindex="0" aria-label="Quality gates">
-        <table class="mp-table">
+        <table class="mp-table mp-table--stack" role="table">
           <caption class="mp-visually-hidden">Quality gates</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="mp-table__num">
+          <thead role="rowgroup">
+            <tr role="row">
+              <th role="columnheader" scope="col" class="mp-table__num">
                 No.
               </th>
-              <th scope="col">Gate</th>
-              <th scope="col">Tool</th>
-              <th scope="col">What it checks</th>
+              <th role="columnheader" scope="col">
+                Gate
+              </th>
+              <th role="columnheader" scope="col">
+                Tool
+              </th>
+              <th role="columnheader" scope="col">
+                What it checks
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {gates.map((g, i) => (
-              <tr>
-                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
-                <th scope="row">{g.gate}</th>
-                <td>{g.tool}</td>
-                <td>{g.checks}</td>
+              <tr role="row">
+                <td role="cell" class="mp-table__num">
+                  {String(i + 1).padStart(2, '0')}
+                </td>
+                <th role="rowheader" scope="row">
+                  {g.gate}
+                </th>
+                <td role="cell" data-label="Tool">
+                  {g.tool}
+                </td>
+                <td role="cell" data-label="What it checks">
+                  {g.checks}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -169,35 +183,45 @@ const description =
           </h2>
         </div>
         <section class="mp-scroll" tabindex="0" aria-label="Lighthouse scores per page">
-          <table class="mp-table">
+          <table class="mp-table mp-table--stack" role="table">
             <caption class="mp-visually-hidden">Lighthouse scores per page</caption>
-            <thead>
-              <tr>
-                <th scope="col">Page</th>
-                <th scope="col" class="mp-table__num">
+            <thead role="rowgroup">
+              <tr role="row">
+                <th role="columnheader" scope="col">
+                  Page
+                </th>
+                <th role="columnheader" scope="col" class="mp-table__num">
                   Performance
                 </th>
-                <th scope="col" class="mp-table__num">
+                <th role="columnheader" scope="col" class="mp-table__num">
                   Accessibility
                 </th>
-                <th scope="col" class="mp-table__num">
+                <th role="columnheader" scope="col" class="mp-table__num">
                   Best practices
                 </th>
-                <th scope="col" class="mp-table__num">
+                <th role="columnheader" scope="col" class="mp-table__num">
                   SEO
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
               {report.lighthouse.map((l) => (
-                <tr>
-                  <th scope="row" class="mp-mono">
+                <tr role="row">
+                  <th role="rowheader" scope="row" class="mp-mono">
                     {l.path}
                   </th>
-                  <td class="mp-table__num">{l.performance}</td>
-                  <td class="mp-table__num">{l.accessibility}</td>
-                  <td class="mp-table__num">{l.bestPractices}</td>
-                  <td class="mp-table__num">{l.seo}</td>
+                  <td role="cell" class="mp-table__num" data-label="Performance">
+                    {l.performance}
+                  </td>
+                  <td role="cell" class="mp-table__num" data-label="Accessibility">
+                    {l.accessibility}
+                  </td>
+                  <td role="cell" class="mp-table__num" data-label="Best practices">
+                    {l.bestPractices}
+                  </td>
+                  <td role="cell" class="mp-table__num" data-label="SEO">
+                    {l.seo}
+                  </td>
                 </tr>
               ))}
             </tbody>

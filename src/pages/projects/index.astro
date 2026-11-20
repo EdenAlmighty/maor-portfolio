@@ -53,35 +53,53 @@ const description = `${projects.length} QA projects: freelance client work, Trip
         <p class="mp-muted">Case studies have their own sheet; the rest are described below.</p>
       </div>
       <section class="mp-scroll" tabindex="0" aria-label="All projects">
-        <table class="mp-table mp-list">
+        <table class="mp-table mp-list mp-table--stack" role="table">
           <caption class="mp-visually-hidden">All projects</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="mp-table__num">
+          <thead role="rowgroup">
+            <tr role="row">
+              <th role="columnheader" scope="col" class="mp-table__num">
                 No.
               </th>
-              <th scope="col">Project</th>
-              <th scope="col">Kind</th>
-              <th scope="col">Testing</th>
-              <th scope="col" class="mp-table__num">
+              <th role="columnheader" scope="col">
+                Project
+              </th>
+              <th role="columnheader" scope="col">
+                Kind
+              </th>
+              <th role="columnheader" scope="col">
+                Testing
+              </th>
+              <th role="columnheader" scope="col" class="mp-table__num">
                 Dates
               </th>
-              <th scope="col">Result</th>
+              <th role="columnheader" scope="col">
+                Result
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {projects.map((p, i) => (
-              <tr>
-                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
-                <th scope="row">
+              <tr role="row">
+                <td role="cell" class="mp-table__num">
+                  {String(i + 1).padStart(2, '0')}
+                </td>
+                <th role="rowheader" scope="row">
                   <a href={p.data.featured ? `/projects/${p.id}` : `#${p.id}`}>{p.data.title}</a>
                   {p.data.featured && <span class="mp-list__case">Case study</span>}
                   {clientLabel(p) && <span class="mp-list__client">{clientLabel(p)}</span>}
                 </th>
-                <td>{kindLabels[p.data.kind]}</td>
-                <td>{p.data.types.map((t) => typeLabels[t]).join(', ')}</td>
-                <td class="mp-table__num">{formatRange(p.data.start, p.data.end)}</td>
-                <td>{p.data.result}</td>
+                <td role="cell" data-label="Kind">
+                  {kindLabels[p.data.kind]}
+                </td>
+                <td role="cell" data-label="Testing">
+                  {p.data.types.map((t) => typeLabels[t]).join(', ')}
+                </td>
+                <td role="cell" class="mp-table__num" data-label="Dates">
+                  {formatRange(p.data.start, p.data.end)}
+                </td>
+                <td role="cell" data-label="Result">
+                  {p.data.result}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -134,6 +152,50 @@ const description = `${projects.length} QA projects: freelance client work, Trip
 </Base>
 
 <style>
+  /* Phones: kind and dates share one line under the title, then testing and result.
+     Flex rather than the shared stacked grid, so the pair can sit side by side. */
+  @media (max-width: 40rem) {
+    .mp-list tr {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.75rem;
+      align-items: baseline;
+      position: relative;
+      padding-inline-start: 3rem;
+    }
+    .mp-list tr > * {
+      flex: 1 1 100%;
+    }
+    .mp-list tr > :first-child {
+      position: absolute;
+      inset-inline-start: 0;
+      top: 1rem;
+      margin: 0;
+    }
+    .mp-list [data-label='Kind'],
+    .mp-list [data-label='Dates'] {
+      flex: 0 1 auto;
+    }
+    .mp-list [data-label='Kind'] {
+      order: 1;
+    }
+    .mp-list [data-label='Dates'] {
+      order: 2;
+      color: var(--ink-2);
+      font-size: 0.8125rem;
+      align-self: baseline;
+    }
+    .mp-list [data-label='Testing'] {
+      order: 3;
+    }
+    .mp-list [data-label='Result'] {
+      order: 4;
+    }
+    .mp-list [data-label='Kind']::before,
+    .mp-list [data-label='Dates']::before {
+      content: none;
+    }
+  }
   .mp-legend {
     list-style: none;
     padding: 0;
@@ -150,7 +212,10 @@ const description = `${projects.length} QA projects: freelance client work, Trip
     min-inline-size: 13rem;
   }
   .mp-list th[scope='row'] a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    margin-block: -0.6rem;
   }
   .mp-list__case,
   .mp-list__client {

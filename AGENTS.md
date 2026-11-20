@@ -72,6 +72,14 @@ scripts/                   checks, OG images, CV PDF, test report, IndexNow
 - First person, plain, specific. Buttons say exactly what happens. No dash-separated clauses
   in project copy (write a colon or a new sentence).
 
+## Tables on phones
+
+Tables with `mp-table--stack` turn each row into a block under 40rem (`src/styles/sheet.css`).
+Changing a cell's display can drop table semantics in some screen readers, so those tables
+carry explicit `role` attributes (`table`, `rowgroup`, `row`, `cell`...). html-validate's
+`no-redundant-role` is off for that reason. Secondary cells get a `data-label` for their
+heading on phones.
+
 ## Performance budget (mobile; CI fails above it)
 
 LCP ≤ 1.5 s (on the Cloudflare preview once it exists), CLS ≤ 0.05, JS ≤ 30 KB gzip per

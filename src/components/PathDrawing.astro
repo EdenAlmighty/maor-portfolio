@@ -68,7 +68,9 @@ stations.forEach((s, i) => {
             <span class="mp-mono mp-muted">{formatRange(s.start, s.end)}</span>
             <strong>{s.title}</strong>
             <span class="mp-path__line">{s.line}</span>
-            <a href={s.link.href}>{s.link.label}</a>
+            <a class="mp-target" href={s.link.href}>
+              {s.link.label}
+            </a>
           </span>
         </li>
       ))}

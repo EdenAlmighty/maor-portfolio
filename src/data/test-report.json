@@ -1,17 +1,18 @@
 {
-  "generatedAt": "2026-11-19T23:00:26.792Z",
-  "commit": null,
+  "generatedAt": "2026-11-20T00:59:08.540Z",
+  "commit": "1f83f04",
   "playwright": {
-    "total": 178,
-    "passed": 178,
+    "total": 200,
+    "passed": 200,
     "failed": 0,
-    "pages": 18,
+    "pages": 29,
     "suites": {
       "a11y": 22,
       "budget": 22,
       "cv": 28,
       "go": 10,
       "layout": 22,
+      "mobile": 22,
       "no-js": 22,
       "seo": 26,
       "smoke": 26

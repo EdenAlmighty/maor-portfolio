@@ -45,9 +45,21 @@ const { path, profiles = false } = Astro.props;
     gap: 1.25rem;
     margin-inline-start: 0.5rem;
   }
+  /* Flex drops the space between the label and the handle, so the gap provides it. */
   .mp-actions__profiles a {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     min-height: var(--touch);
+  }
+  /* On a phone the two buttons are full width, within easy reach of a thumb. */
+  @media (max-width: 40rem) {
+    .mp-actions > .mp-btn {
+      flex: 1 1 100%;
+      justify-content: flex-start;
+    }
+    .mp-actions__profiles {
+      margin-inline-start: 0;
+    }
   }
 </style>

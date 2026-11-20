@@ -95,28 +95,38 @@ const cells = [
               Defects I reported
             </h2>
             <section class="mp-scroll" tabindex="0" aria-label="Revision table: defects reported">
-              <table class="mp-table mp-findings">
+              <table class="mp-table mp-findings mp-table--stack" role="table">
                 <caption class="mp-visually-hidden">Revision table: defects reported</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Rev</th>
-                    <th scope="col">Defect</th>
-                    <th scope="col" class="mp-table__num">
+                <thead role="rowgroup">
+                  <tr role="row">
+                    <th role="columnheader" scope="col">
+                      Rev
+                    </th>
+                    <th role="columnheader" scope="col">
+                      Defect
+                    </th>
+                    <th role="columnheader" scope="col" class="mp-table__num">
                       Test case
                     </th>
-                    <th scope="col">Report</th>
+                    <th role="columnheader" scope="col">
+                      Report
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody role="rowgroup">
                   {d.findings.map((f) => (
-                    <tr id={`defect-${f.id}`}>
-                      <td>
+                    <tr role="row" id={`defect-${f.id}`}>
+                      <td role="cell">
                         <span class="mp-rev">{f.id}</span>
                       </td>
-                      <th scope="row">{f.title}</th>
-                      <td class="mp-table__num">{f.test ?? ''}</td>
-                      <td>
-                        <a href={f.href}>Issue #{f.id}</a>
+                      <th role="rowheader" scope="row">
+                        <a class="mp-findings__link" href={f.href}>
+                          {f.title}
+                          <span class="mp-findings__issue">GitHub issue #{f.id}</span>
+                        </a>
+                      </th>
+                      <td role="cell" class="mp-table__num" data-label="Test case">
+                        {f.test ?? ''}
                       </td>
                     </tr>
                   ))}
@@ -229,8 +239,21 @@ const cells = [
     font-weight: 400;
     min-inline-size: 16rem;
   }
-  .mp-findings td:last-child {
-    white-space: nowrap;
+  .mp-findings__link {
+    display: block;
+    padding-block: 0.15rem;
+    text-decoration: none;
+  }
+  .mp-findings__link:hover {
+    text-decoration: underline;
+  }
+  .mp-findings__issue {
+    display: block;
+    margin-block-start: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    text-decoration: underline;
   }
   .mp-findings tr:target {
     background: var(--paper-2);

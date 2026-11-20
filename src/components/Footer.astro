@@ -14,23 +14,22 @@ const path = pagePath(Astro.url);
       </div>
       <div class="mp-tb__cell">
         <span class="mp-tb__label">Role</span>
-        <span class="mp-tb__value">
-          {site.title}, {site.locality}
+        <span class="mp-tb__value">{`${site.title}, ${site.locality}`}</span>
+      </div>
+      <div class="mp-tb__cell mp-tb__cell--email">
+        <span class="mp-tb__label">Email</span>
+        <span class="mp-tb__value mp-footer__links">
+          <a href={goFrom('email', path)} rel="nofollow">
+            {site.email}
+          </a>
         </span>
       </div>
       <div class="mp-tb__cell">
-        <span class="mp-tb__label">Email</span>
-        <a class="mp-tb__value" href={goFrom('email', path)} rel="nofollow">
-          {site.email}
-        </a>
-      </div>
-      <div class="mp-tb__cell">
         <span class="mp-tb__label">Profiles</span>
-        <span class="mp-tb__value">
+        <span class="mp-tb__value mp-footer__links">
           <a href={goFrom('linkedin', path)} rel="nofollow">
             LinkedIn
           </a>
-          ,{' '}
           <a href={goFrom('github', path)} rel="nofollow">
             GitHub
           </a>
@@ -38,14 +37,16 @@ const path = pagePath(Astro.url);
       </div>
       <div class="mp-tb__cell">
         <span class="mp-tb__label">This site</span>
-        <span class="mp-tb__value">
-          <a href="/how-this-site-is-tested">How it is tested</a>, <a href={site.repo}>its code</a>
+        <span class="mp-tb__value mp-footer__links">
+          <a href="/how-this-site-is-tested">How it is tested</a>
+          <a href={site.repo}>Its code</a>
         </span>
       </div>
       <div class="mp-tb__cell">
         <span class="mp-tb__label">Statements</span>
-        <span class="mp-tb__value">
-          <a href="/accessibility">Accessibility</a>, <a href="/privacy">Privacy</a>
+        <span class="mp-tb__value mp-footer__links">
+          <a href="/accessibility">Accessibility</a>
+          <a href="/privacy">Privacy</a>
         </span>
       </div>
       <div class="mp-tb__cell">

@@ -21,6 +21,8 @@ async function playwright() {
     for (const spec of suite.specs ?? []) {
       const name = f.replace(/\.spec\.ts$/, '').replace(/^.*[\\/]/, '');
       for (const test of spec.tests ?? []) {
+        // A test skipped on purpose (phone-only or desktop-only) is not a result.
+        if (test.results?.every((r) => r.status === 'skipped')) continue;
         suites[name] = (suites[name] ?? 0) + 1;
         const ok = test.results?.some((r) => r.status === 'passed');
         if (ok) passed++;

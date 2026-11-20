@@ -8,7 +8,7 @@ import Zones from '../components/Zones.astro';
 import Icon from '../components/Icon.astro';
 import { getProjects, projectPath } from '../lib/content';
 import { partsList } from '../lib/skills';
-import { report } from '../lib/report';
+import { israelDate, report } from '../lib/report';
 import { sheetOf } from '../lib/sheets';
 import { goFrom, site } from '../lib/site';
 
@@ -112,26 +112,32 @@ const title = `${site.name}, ${site.title} in ${site.locality}`;
         <a href="/cv">Full skills list on the CV</a>
       </div>
       <section class="mp-scroll" tabindex="0" aria-label="Skills and the projects that show them">
-        <table class="mp-table mp-parts">
+        <table class="mp-table mp-parts mp-table--stack" role="table">
           <caption class="mp-visually-hidden">Skills and the projects that show them</caption>
-          <thead>
-            <tr>
-              <th scope="col" class="mp-table__num">
+          <thead role="rowgroup">
+            <tr role="row">
+              <th role="columnheader" scope="col" class="mp-table__num">
                 Item
               </th>
-              <th scope="col">Skill</th>
-              <th scope="col">Shown in</th>
+              <th role="columnheader" scope="col">
+                Skill
+              </th>
+              <th role="columnheader" scope="col">
+                Shown in
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {partsList.map((part, i) => (
-              <tr>
-                <td class="mp-table__num">{String(i + 1).padStart(2, '0')}</td>
-                <th scope="row">
-                  {part.skill}
+              <tr role="row">
+                <td role="cell" class="mp-table__num">
+                  {String(i + 1).padStart(2, '0')}
+                </td>
+                <th role="rowheader" scope="row">
+                  <span class="mp-parts__skill">{part.skill}</span>
                   <span class="mp-parts__detail">{part.detail}</span>
                 </th>
-                <td>
+                <td role="cell" data-label="Shown in">
                   <ul class="mp-parts__links">
                     {part.projects.map((id) => {
                       const p = byId.get(id);
@@ -234,7 +240,7 @@ const title = `${site.name}, ${site.title} in ${site.locality}`;
           <div class="mp-tb__cell">
             <dt class="mp-tb__label">Last run</dt>
             <dd class="mp-tb__value mp-tb__value--mono">
-              {report.generatedAt ? report.generatedAt.slice(0, 10) : 'Not run yet'}
+              {report.generatedAt ? israelDate(report.generatedAt) : 'Not run yet'}
             </dd>
           </div>
         </dl>
@@ -316,9 +322,9 @@ const title = `${site.name}, ${site.title} in ${site.locality}`;
     font-size: 0.9375rem;
     max-inline-size: 70ch;
   }
-  .mp-parts tbody th {
-    display: grid;
-    gap: 0.1rem;
+  .mp-parts__skill,
+  .mp-parts__detail {
+    display: block;
   }
   .mp-parts__detail {
     font-weight: 400;
@@ -334,8 +340,10 @@ const title = `${site.name}, ${site.title} in ${site.locality}`;
     gap: 0.15rem 1.1rem;
   }
   .mp-parts__links a {
-    display: inline-block;
-    padding-block: 0.15rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    margin-block: -0.4rem;
   }
   .mp-split {
     display: grid;
