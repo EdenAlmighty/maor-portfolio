@@ -21,23 +21,24 @@ Built the edengilady.com way: the `site-*` skills (start with `site-blueprint`).
 
 ## Commands
 
-| Task                              | Command                                                             |
-| --------------------------------- | ------------------------------------------------------------------- |
-| Install                           | `npm ci`                                                            |
-| Dev server                        | `npm run dev`                                                       |
-| Build                             | `npm run build` (output in `dist/client`)                           |
-| Serve the build (workerd)         | `npm run preview`; stop with `npx astro preview stop`               |
-| Every quality gate                | `npm run verify`                                                    |
-| Lint, format, types               | `npm run lint`, `npm run format:check`, `npm run check`             |
-| HTML, links, budget               | `npm run check:html`, `npm run check:links`, `npm run check:budget` |
-| Evidence links (GitHub, Drive...) | `npm run check:evidence`                                            |
-| Browser tests                     | `npm test` (Playwright + axe; Pixel 7 and desktop Chrome)           |
-| Lighthouse                        | `npx @lhci/cli@0.15.1 autorun`, `npm run check:agentic`             |
-| After a build: OG images, CV PDF  | `npm run og`, `npm run cv:pdf`; commit `public/og/` and the PDF     |
-| Results for the testing page      | `npm run test-report` (after `npm test` and Lighthouse)             |
-| Worker types / local D1           | `npm run generate-types` / `npm run db:migrate:local`               |
-| Click counts (after the handover) | `npm run clicks -- --remote`                                        |
-| TODO report / launch gate         | `npm run check:todos` / `npm run check:launch`                      |
+| Task                                            | Command                                                                  |
+| ----------------------------------------------- | ------------------------------------------------------------------------ |
+| Install                                         | `npm ci`                                                                 |
+| Dev server                                      | `npm run dev`                                                            |
+| Build                                           | `npm run build` (output in `dist/client`)                                |
+| Serve the build (workerd)                       | `npm run preview`; stop with `npx astro preview stop`                    |
+| Review preview (Eden's account, noindex, no D1) | `npm run deploy:preview` → maor-portfolio-preview.edengilady.workers.dev |
+| Every quality gate                              | `npm run verify`                                                         |
+| Lint, format, types                             | `npm run lint`, `npm run format:check`, `npm run check`                  |
+| HTML, links, budget                             | `npm run check:html`, `npm run check:links`, `npm run check:budget`      |
+| Evidence links (GitHub, Drive...)               | `npm run check:evidence`                                                 |
+| Browser tests                                   | `npm test` (Playwright + axe; Pixel 7 and desktop Chrome)                |
+| Lighthouse                                      | `npx @lhci/cli@0.15.1 autorun`, `npm run check:agentic`                  |
+| After a build: OG images, CV PDF                | `npm run og`, `npm run cv:pdf`; commit `public/og/` and the PDF          |
+| Results for the testing page                    | `npm run test-report` (after `npm test` and Lighthouse)                  |
+| Worker types / local D1                         | `npm run generate-types` / `npm run db:migrate:local`                    |
+| Click counts (after the handover)               | `npm run clicks -- --remote`                                             |
+| TODO report / launch gate                       | `npm run check:todos` / `npm run check:launch`                           |
 
 Astro allows one preview server per project, and on Windows a running preview locks `dist/`
 so the next build fails: stop it (`npx astro preview stop`) before building, testing or
@@ -86,7 +87,8 @@ Performance ≥ 95; Accessibility, Best Practices and SEO 100; Agentic Browsing 
 - Text or numbers that appear only after JavaScript runs.
 - Secrets in the repo. There are none today; at the handover Maor sets
   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` with `gh secret set` himself.
-- Cloudflare resources in Eden's account: the site goes to Maor's account at the handover.
+- Cloudflare resources in Eden's account, apart from the review preview Worker
+  (`maor-portfolio-preview`, `npm run deploy:preview`): the real site goes to Maor's account.
 
 ## Definition of done for a change
 
