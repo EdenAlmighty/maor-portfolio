@@ -45,6 +45,7 @@ export const GET: APIRoute = async () => {
     '',
     `- [Accessibility statement](${url('/accessibility')})`,
     `- [Privacy](${url('/privacy')})`,
+    `- Site designed and built by [${site.builtBy.name}](${site.builtBy.url})`,
     '',
   ];
   return new Response(lines.join('\n'), {

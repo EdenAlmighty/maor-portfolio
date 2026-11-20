@@ -57,6 +57,7 @@ Still needed before Gate 1:
 - [x] Cloudflare: Maor's account, later
 - [ ] Maor: the CV corrections in `CONTENT-MAP.md` §6 ("Uber Routes" → Urban Routes, one name for the taxi app, CSV vs JSON, First-Rate dates), the First-Rate data-driven script pushed to GitHub, and the Star Wars API Drive folder made public
 - [ ] Maor: approve generating the CV PDF from the `/cv` page
+- [ ] Maor: agree to the "Site by Eden Gilady" credit in the footer (and the link to edengilady.com in the Weather App case study)
 - [ ] Eden: a two-sentence quote about working with Maor on the Weather App (optional)
 - [ ] Maor: the domain (needed only at launch; buy it in his Cloudflare account so DNS is there too)
 - [ ] Eden: approve or edit the positioning and hero lines below

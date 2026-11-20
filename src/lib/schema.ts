@@ -39,6 +39,7 @@ export function websiteNode() {
     name: `${site.name}, ${site.title}`,
     inLanguage: 'en',
     author: { '@id': personId },
+    creator: { '@type': 'Person', name: site.builtBy.name, url: site.builtBy.url },
   };
 }
 

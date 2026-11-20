@@ -50,6 +50,12 @@ const path = pagePath(Astro.url);
         </span>
       </div>
       <div class="mp-tb__cell">
+        <span class="mp-tb__label">Site by</span>
+        <span class="mp-tb__value mp-footer__links">
+          <a href={site.builtBy.url}>{site.builtBy.name}</a>
+        </span>
+      </div>
+      <div class="mp-tb__cell">
         <span class="mp-tb__label">Last updated</span>
         <span class="mp-tb__value mp-tb__value--mono">
           <time datetime={site.updated}>{site.updated}</time>

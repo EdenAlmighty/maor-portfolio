@@ -59,7 +59,7 @@ evidence:
     href: https://weather-app-6iqa.onrender.com/
 ---
 
-A full-stack developer built a weather app; I was its tester. This was the first project where
+[Eden Gilady](https://edengilady.com), a full-stack developer, built a weather app; I was its tester. This was the first project where
 nobody handed me the test cases: I decided what to cover, built the suite, ran it, and reported
 what failed.
 

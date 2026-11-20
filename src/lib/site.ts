@@ -50,6 +50,9 @@ export const site = {
     'SQL',
     'Test documentation',
   ],
+  // Who built the site: one branded credit in the footer, plus the WebSite node's
+  // creator in JSON-LD (site-seo-geo, "Builder credit").
+  builtBy: { name: 'Eden Gilady', url: 'https://edengilady.com' },
   // The date shown in footers and title blocks. Update it when the content changes.
   updated: '2026-11-20',
 } as const;
