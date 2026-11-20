@@ -35,10 +35,12 @@ const { projects } = Astro.props;
         </ul>
       </div>
       <p class="mp-row__result">
-        {p.data.findings.length > 0 && (
+        {p.data.findings.length > 0 ? (
           <span class="mp-rev" title="Defects reported">
             {p.data.findings.length}
           </span>
+        ) : (
+          <span class="mp-row__nomark" aria-hidden="true" />
         )}
         <span>{p.data.result}</span>
       </p>
@@ -103,6 +105,10 @@ const { projects } = Astro.props;
   .mp-row__body {
     display: grid;
     gap: 0.75rem;
+  }
+  .mp-row__nomark {
+    inline-size: 1.575rem;
+    flex: none;
   }
   .mp-row__result {
     display: flex;

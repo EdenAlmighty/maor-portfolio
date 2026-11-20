@@ -13,6 +13,8 @@ interface Props {
 }
 const { title, path, cells = [] } = Astro.props;
 const sheet = sheetOf(path);
+// "Moving-quote" must not break at its hyphen in a large heading.
+const titleParts = title.split(/(\S*-\S*)/).filter(Boolean);
 ---
 
 <div class="mp-wrap">
@@ -21,7 +23,9 @@ const sheet = sheetOf(path);
     <div class="mp-pagesheet__text">
       <slot name="before" />
       <h1 id="page-title" class="mp-h1">
-        {title}
+        {titleParts.map((part) =>
+          part.includes('-') ? <span class="mp-nobreak">{part}</span> : part,
+        )}
       </h1>
       <div class="mp-pagesheet__lede">
         <slot />
