@@ -8,7 +8,7 @@ import { site } from '../lib/site';
 interface Props {
   title: string;
   path: string;
-  /** Extra title-block cells for this page (client, dates, role...). */
+  /** Extra title-block cells for this page (kind, dates, role...). */
   cells?: { label: string; value: string; wide?: boolean; mono?: boolean }[];
 }
 const { title, path, cells = [] } = Astro.props;

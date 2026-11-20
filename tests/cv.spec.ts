@@ -19,3 +19,13 @@ for (const path of [...allPaths, '/llms.txt', '/404']) {
     expect(html.replace(/\D/g, '')).not.toContain(digits);
   });
 }
+
+// Maor's freelance projects were his own, not client work, and he does not list Figma
+// (AGENTS.md). The page text and llms.txt must never say either.
+for (const path of [...allPaths, '/llms.txt']) {
+  test(`${path} never says "client" or "Figma"`, async ({ request }) => {
+    const html = await (await request.get(path)).text();
+    const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, ' ');
+    expect(text).not.toMatch(/\bclients?\b|figma/i);
+  });
+}

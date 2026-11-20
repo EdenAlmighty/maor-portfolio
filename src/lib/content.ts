@@ -1,5 +1,4 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { site } from './site';
 
 export type Project = CollectionEntry<'projects'>;
 
@@ -11,10 +10,6 @@ export async function getProjects(): Promise<Project[]> {
 
 export const projectPath = (p: Project) =>
   p.data.featured ? `/projects/${p.id}` : `/projects#${p.id}`;
-
-/** The client's name only when the client has agreed to be named (site.ts). */
-export const clientLabel = (p: Project) =>
-  p.data.client && site.firstRateNamed ? p.data.client : p.data.clientUnnamed;
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

@@ -64,7 +64,7 @@ export const partsList: { skill: string; detail: string; projects: string[] }[] 
   },
   {
     skill: 'Designs as the spec',
-    detail: 'screens compared with Figma',
+    detail: 'screens compared with the design mock-ups',
     projects: ['urban-routes', 'urban-lunch'],
   },
   {

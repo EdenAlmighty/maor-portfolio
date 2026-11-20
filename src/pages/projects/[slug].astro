@@ -5,7 +5,7 @@ import Actions from '../../components/Actions.astro';
 import Evidence from '../../components/Evidence.astro';
 import PageSheet from '../../components/PageSheet.astro';
 import { kindLabels, typeLabels } from '../../lib/labels';
-import { clientLabel, formatRange, getProjects, type Project } from '../../lib/content';
+import { formatRange, getProjects, type Project } from '../../lib/content';
 import { projectNode } from '../../lib/schema';
 import { site } from '../../lib/site';
 
@@ -30,10 +30,8 @@ const { project, prev, next } = Astro.props;
 const d = project.data;
 const { Content } = await render(project);
 const path = `/projects/${project.id}`;
-const client = clientLabel(project);
 const metaTitle = `${d.title}: a QA case study by ${site.shortName}`;
 const cells = [
-  ...(client ? [{ label: 'Client', value: client, wide: true }] : []),
   { label: 'Kind', value: kindLabels[d.kind] },
   { label: 'Dates', value: formatRange(d.start, d.end), mono: true },
   { label: 'Role', value: d.role, wide: true },

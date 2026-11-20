@@ -4,7 +4,7 @@ import Actions from '../../components/Actions.astro';
 import Evidence from '../../components/Evidence.astro';
 import PageSheet from '../../components/PageSheet.astro';
 import { kindLabels, testingTypes, typeLabels } from '../../lib/labels';
-import { clientLabel, formatRange, getProjects } from '../../lib/content';
+import { formatRange, getProjects } from '../../lib/content';
 import { site } from '../../lib/site';
 
 const projects = await getProjects();
@@ -14,7 +14,7 @@ const counts = testingTypes
   .filter((c) => c.n > 0);
 const freelance = projects.filter((p) => p.data.kind === 'freelance').length;
 const title = `QA projects by ${site.name}`;
-const description = `${projects.length} QA projects: freelance client work, TripleTen bootcamp projects and practice. Manual, automation, API, mobile, load and database testing.`;
+const description = `${projects.length} QA projects: freelance projects, TripleTen bootcamp projects and practice. Manual, automation, API, mobile, load and database testing.`;
 ---
 
 <Base
@@ -32,8 +32,8 @@ const description = `${projects.length} QA projects: freelance client work, Trip
     ]}
   >
     <p class="mp-lede">
-      Every project I have tested, newest client work first. Each one says what kind of work it was:
-      freelance, TripleTen bootcamp, a practice project or course work.
+      Every project I have tested, newest freelance work first. Each one says what kind of work it
+      was: freelance, TripleTen bootcamp, a practice project or course work.
     </p>
     <ul class="mp-legend" aria-label="Projects by testing type">
       {counts.map((c) => (
@@ -86,7 +86,6 @@ const description = `${projects.length} QA projects: freelance client work, Trip
                 <th role="rowheader" scope="row">
                   <a href={p.data.featured ? `/projects/${p.id}` : `#${p.id}`}>{p.data.title}</a>
                   {p.data.featured && <span class="mp-list__case">Case study</span>}
-                  {clientLabel(p) && <span class="mp-list__client">{clientLabel(p)}</span>}
                 </th>
                 <td role="cell" data-label="Kind">
                   {kindLabels[p.data.kind]}
@@ -217,8 +216,7 @@ const description = `${projects.length} QA projects: freelance client work, Trip
     min-height: var(--touch);
     margin-block: -0.6rem;
   }
-  .mp-list__case,
-  .mp-list__client {
+  .mp-list__case {
     display: block;
     font-weight: 400;
     font-size: 0.8125rem;

@@ -66,7 +66,9 @@ listed without a link.
 ### Tier 1: full case-study pages
 
 **First-Rate Moving & Storage** — freelance, May–June 2026
-- Client: firstratemove.com, a moving company in New Jersey. Maor tested the moving-quote web app.
+- Not a client (Eden, 2026-11-20): a self-directed freelance project. Maor tested the moving-quote
+  web app on firstratemove.com, a New Jersey moving company's live site. The site never says "client"
+  and does not name the company.
 - Work: test plan, requirements and test-case documents (Drive). Manual UI and exploratory
   testing, a keyboard and accessibility audit, mobile viewports. Playwright with a page object
   (`pages/QuotePage.js`): a quote-form happy path, required-field validation, and a link check
@@ -78,9 +80,9 @@ listed without a link.
 - Strong story: GitHub issue #2 records that automated runs against production were blocked by the
   site's Cloudflare bot protection, and explains why. That is a real-world finding worth telling.
 - **Ask:**
-  - Did First-Rate agree to be named on Maor's site and to have screenshots of its site shown?
-    Until they do, the page calls the client "a New Jersey moving company".
-  - Did the client approve load-testing the production site? The case study should say so.
+  - The company did not hire Maor. Did he have its OK to run the JMeter load test and the
+    automated runs against its live site? If not, the case study should say how the load was kept
+    gentle, or leave the load test out.
   - The CV says the 50 scenarios come from "external JSON data". The file in Drive is a CSV, and
     the data-driven script isn't in the GitHub repo. Push that script to the repo, and make the
     CV wording match the file.
@@ -102,7 +104,7 @@ listed without a link.
 **Urban Routes: end-to-end automation** — TripleTen, Aug 2024
 - WebdriverIO + Mocha, page object (`page.js`) and helpers, the taxi-ordering flow end to end.
 - Proof: `Maor87/hm08-qa-us`, CI green (last run Mar 2026). Two open Dependabot/Snyk PRs.
-- Merge with the manual Urban Routes work (Figma UI check, payment form, Jira bugs) and the Aero
+- Merge with the manual Urban Routes work (UI check against the designs, payment form, Jira bugs) and the Aero
   Taxi feature tests into one page: the same app, tested manually first and then automated.
 
 **Urban Grocers: API testing** — TripleTen, Jul 2024

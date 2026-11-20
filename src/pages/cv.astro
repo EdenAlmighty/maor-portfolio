@@ -4,7 +4,7 @@
 import Base from '../layouts/Base.astro';
 import Actions from '../components/Actions.astro';
 import { education, history, skills, summary } from '../data/cv';
-import { clientLabel, formatRange, getProjects, projectPath } from '../lib/content';
+import { formatRange, getProjects, projectPath } from '../lib/content';
 import { kindLabels } from '../lib/labels';
 import { site } from '../lib/site';
 
@@ -108,7 +108,6 @@ const description =
                 <div class="mp-cv__itemhead">
                   <h4>
                     <a href={`${site.url}${projectPath(p)}`}>{p.data.title}</a>
-                    {clientLabel(p) && <span class="mp-muted">, {clientLabel(p)}</span>}
                     {g.title.startsWith('Practice') && (
                       <span class="mp-muted">, {kindLabels[p.data.kind].toLowerCase()}</span>
                     )}

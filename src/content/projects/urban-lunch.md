@@ -1,6 +1,6 @@
 ---
 title: Urban Lunch
-description: 'Manual mobile testing of a lunch-ordering Android app on a Pixel 5 emulator: requirements, Figma layouts, slow networks and Jira bug reports.'
+description: 'Manual mobile testing of a lunch-ordering Android app on a Pixel 5 emulator: requirements, design layouts, slow networks and Jira bug reports.'
 summary: A mobile test strategy run on an emulator, including poor network conditions.
 order: 6
 kind: bootcamp
@@ -8,10 +8,10 @@ types: [mobile, manual]
 start: 2024-06
 end: 2024-06
 role: QA tester (TripleTen project)
-tools: [Android Studio, Pixel 5 emulator, Jira, Figma]
+tools: [Android Studio, Pixel 5 emulator, Jira]
 result: A mobile checklist run on a Pixel 5 emulator, with Jira bug reports
 notes:
-  - Built the checklist from the requirements and the Figma layouts.
+  - Built the checklist from the requirements and the design layouts.
   - 'Ran it on a Pixel 5 emulator in Android Studio: user journeys, load times, and behaviour on slow or dropped networks.'
   - Read the device logs to find the cause behind crashes and odd behaviour.
 evidence:

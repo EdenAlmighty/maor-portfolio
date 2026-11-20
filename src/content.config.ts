@@ -11,9 +11,6 @@ const projects = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
-    // The client's name, shown only when site.firstRateNamed allows it.
-    client: z.string().optional(),
-    clientUnnamed: z.string().optional(),
     // Search result snippet; Bing flags anything outside 25-160 characters.
     description: z.string().min(25).max(160),
     summary: z.string(),

@@ -2,7 +2,7 @@
 // The featured projects as rows of a drawing list. The first row is the lead project and
 // gets more room; every row ends in its case study.
 import { kindLabels, typeLabels } from '../lib/labels';
-import { clientLabel, formatRange, type Project } from '../lib/content';
+import { formatRange, type Project } from '../lib/content';
 
 interface Props {
   projects: Project[];
@@ -22,7 +22,6 @@ const { projects } = Astro.props;
         </h3>
         <p class="mp-row__meta">
           <span>{kindLabels[p.data.kind]}</span>
-          {clientLabel(p) && <span>{clientLabel(p)}</span>}
           <span class="mp-mono">{formatRange(p.data.start, p.data.end)}</span>
         </p>
       </div>

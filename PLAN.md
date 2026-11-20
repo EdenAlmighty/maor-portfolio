@@ -50,7 +50,7 @@ Still needed before Gate 1:
 
 - [ ] Maor: the roles he's applying for (manual, automation or both; junior or mid-level; Israel, remote or both). The hero line and the order of the projects depend on this
 - [ ] Maor: the languages he speaks, and how well
-- [ ] Maor: permission from First-Rate Moving & Storage to name them and show screenshots of their site. Also confirm the client approved the JMeter load test on their live site
+- [ ] Maor: the moving-quote project was self-directed, not for a client (decided 2026-11-20), so the company stays unnamed. Confirm whether the JMeter load test on its live site had the owner's OK
 - [x] Phone number: CV PDF only
 - [x] Photo: later; design without it for now
 - [x] GitHub: Eden's account first, transferred to Maor at the end
@@ -123,9 +123,9 @@ no logos of tools in a grid, no claims about a project that its sources don't sh
 
 | Project | URL | Tier | What a hiring manager learns | Proof |
 | --- | --- | --- | --- | --- |
-| First-Rate Moving & Storage | `/projects/first-rate` | Case study | Plans and runs a full test effort for a real client: manual, Playwright, 50 data-driven runs, JMeter, accessibility, API | GitHub repo + issues, Drive: test plan, requirements, test cases, CSV, video, JMeter report |
+| First-Rate Moving & Storage | `/projects/first-rate` | Case study | Plans and runs a full, self-directed test effort on a live business site: manual, Playwright, 50 data-driven runs, JMeter, accessibility, API | GitHub repo + issues, Drive: test plan, requirements, test cases, CSV, video, JMeter report |
 | Weather App | `/projects/weather-app` | Case study | Builds a Playwright suite alone: 32 tests, page objects, visual snapshots, mobile and desktop, 7 bug reports | GitHub repo + 7 issues, test-case sheet, Eden's quote |
-| Urban Routes | `/projects/urban-routes` | Case study | The same app tested twice: manually (Figma UI check, payment form, Aero Taxi feature) and then with WebdriverIO end to end | GitHub `hm08-qa-us` (CI passing), Drive sheets and bug folder |
+| Urban Routes | `/projects/urban-routes` | Case study | The same app tested twice: manually (UI check against the designs, payment form, Aero Taxi feature) and then with WebdriverIO end to end | GitHub `hm08-qa-us` (CI passing), Drive sheets and bug folder |
 | Urban Grocers API | `/projects/urban-grocers-api` | Case study | Reads Swagger docs, builds a Postman checklist, automates GET/POST/PUT/DELETE tests in Jest | GitHub `hm07-qa-us`, Drive sheets and bug folder |
 | Urban Scooter | `/projects#scooter` | Card | Web, Android and API testing plus PostgreSQL checks | Drive |
 | Urban Lunch | `/projects#lunch` | Card | Mobile testing on an emulator, under poor network conditions | Drive |
@@ -138,8 +138,8 @@ no logos of tools in a grid, no claims about a project that its sources don't sh
 Case-study page order: one-line summary; the product and Maor's role; what was tested and why;
 how (tools in plain words); what he found (real bugs, with links); what he would do next; links
 to the evidence; the two actions. Screenshots come from Maor's own documents or are taken fresh
-from public pages. The First-Rate page names the client only after permission (until then:
-"a New Jersey moving company").
+from public pages. The moving-quote page never names the company or calls it a client: it was a
+self-directed project.
 
 Project data lives in a content collection (`src/content/projects/*.md`) with a Zod schema:
 `title`, `summary`, `type[]` (manual, automation, api, mobile, performance, database,
@@ -195,7 +195,7 @@ Each section ends with a way to the CV or email.
 1. **Header:** name (home link), Projects, About, CV, and an "Email me" button.
 2. **Hero:** H1, subhead, Download my CV, Email me, trust line. Photo if there is one.
 3. **The path:** bootcamp, with manual, API and first automation work (2024) → first freelance
-   automation project, the Weather App (2025) → a full test effort for a business client,
+   automation project, the Weather App (2025) → a full, self-directed test effort on a live business site,
    First-Rate (2026). Three steps, each linking to its project. This is the bold element in Direction A.
 4. **Featured work:** the four case studies, each with what was tested, the tools, and one
    concrete result (for example "7 bug reports filed").
@@ -415,7 +415,7 @@ Pre-launch:
 - [ ] `/go/` counts reach D1; the CV PDF matches `/cv` and is under 200 KB
 - [ ] No TODO markers left (`npm run check:launch`), or Eden accepts the list
 - [ ] Every claim on the site traced to `CONTENT-MAP.md`; every evidence link opens without a login
-- [ ] First-Rate named only if permission is on record
+- [ ] No page names the moving company or says "client"
 - [ ] Maor has read every page and the generated PDF
 - [ ] Rich Results Test passes for home and one case study
 
@@ -438,7 +438,7 @@ After launch:
 
 | Risk | How it is handled |
 | --- | --- |
-| First-Rate says no to being named | The case study stays, with the client unnamed and no screenshots of their site |
+| The company objects to the project | The case study stays, with the company unnamed and no screenshots of its site |
 | A claim on the CV doesn't match the evidence | `CONTENT-MAP.md` is checked before copy is written; the CV is fixed, not the site stretched |
 | Evidence links break (Drive files moved or made private) | A weekly scheduled CI job checks every evidence link; key documents exported as PDFs and hosted on the site, if Maor agrees |
 | Weather App host is slow or goes down | Screenshots on the page; the live link is labelled as a demo that may take a minute to wake up |

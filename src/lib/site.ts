@@ -32,9 +32,6 @@ export const site = {
   languages: null as { language: string; level: string }[] | null,
   // TODO(content): Eden's quote about the Weather App, in Eden's own words. Optional.
   quote: null as { text: string; by: string; role: string } | null,
-  // The First-Rate client is named on the site only after they agree (PLAN.md). The
-  // GitHub repo, which is Maor's own public work, keeps its name either way.
-  firstRateNamed: false,
   knowsAbout: [
     'Software testing',
     'Manual testing',

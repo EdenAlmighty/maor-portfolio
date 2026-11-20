@@ -29,7 +29,7 @@ leaves believing he tests carefully and documents everything.
 ## Positioning
 
 Every claim links to its evidence: a repo, a bug report, a test document. A career changer from
-caregiving who went from a 2024 bootcamp to tested client work in 2026, and shows his receipts.
+caregiving who went from a 2024 bootcamp to self-directed freelance testing in 2026, and shows his receipts.
 The site's own test suite is public and shown on the site.
 
 ## Operating Context
@@ -43,7 +43,8 @@ detail: typos, broken links and accessibility bugs on a QA candidate's site coun
 - Phone number appears only inside the CV PDF, never on an HTML page.
 - No photo yet (comes later); the design must not depend on one.
 - No third-party scripts; everything readable with JavaScript off.
-- First-Rate client permission is unconfirmed: the client stays unnamed in copy until it is.
+- There are no clients. The freelance projects are Maor's own; the moving company whose site he
+  tested stays unnamed, and no copy says "client".
 
 ## Brand Commitments
 

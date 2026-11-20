@@ -1,6 +1,6 @@
 ---
 title: Urban Routes
-description: 'Manual and automated testing of a ride-ordering web app: Figma UI checks, payment form tests, Jira bugs, then an end-to-end WebdriverIO suite.'
+description: 'Manual and automated testing of a ride-ordering web app: UI checks against the designs, payment form tests, Jira bugs, then an end-to-end WebdriverIO suite.'
 summary: 'One app tested twice: by hand first, then with an end-to-end suite.'
 order: 3
 featured: true
@@ -9,10 +9,10 @@ types: [manual, automation, visual]
 start: 2024-05
 end: 2024-08
 role: QA tester (TripleTen project)
-tools: [WebdriverIO, Mocha, JavaScript, Node.js, Jira, Figma, Chrome DevTools, GitHub Actions]
+tools: [WebdriverIO, Mocha, JavaScript, Node.js, Jira, Chrome DevTools, GitHub Actions]
 result: Manual test cases and Jira bug reports, then an end-to-end suite that passes in CI
 notes:
-  - 'Compared the car-sharing screens with the Figma designs: fonts, colours, alignment and responsiveness.'
+  - 'Compared the car-sharing screens with the design mock-ups: fonts, colours, alignment and responsiveness.'
   - Tested the payment form with valid and invalid input, edge cases and equivalence classes.
   - Wrote positive and negative functional test cases and ran them in up-to-date browsers at set screen sizes, with a clean cache.
   - 'Tested the new Aero Taxi option: its icon in the transport panel, when it turns active and inactive, and the travel time, cost and service name it shows.'

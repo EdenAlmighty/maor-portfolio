@@ -1,9 +1,7 @@
 ---
 title: Moving-quote web app
-client: First-Rate Moving & Storage
-clientUnnamed: New Jersey moving company
 description: 'Freelance QA for a moving-quote web app: manual and exploratory testing, Playwright, 50 data-driven runs, a JMeter load test and an accessibility check.'
-summary: A full test effort for a business client, from the test plan to the load test.
+summary: A full test effort on a live business website, from the test plan to the load test.
 order: 1
 featured: true
 kind: freelance
@@ -59,5 +57,5 @@ phone, with only a keyboard, and when many people send it at once.
 The most useful finding was not a bug in the form. When I pointed the automated suite at the
 live site, every run stopped at the site's firewall and bot protection, which treats a headless
 browser as an attacker. That is the protection doing its job, so I wrote it up as an issue with
-what it means for the client: automated regression tests need a staging copy of the site, or an
+what it means for the site's owner: automated regression tests need a staging copy of the site, or an
 allow-list rule for the test runner, before they can run on a schedule.

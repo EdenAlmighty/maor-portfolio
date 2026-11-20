@@ -67,7 +67,9 @@ scripts/                   checks, OG images, CV PDF, test report, IndexNow
   no numbers, clients, quotes or skills a source does not show. Missing content is a
   `TODO(content): …` comment, `null` in `site.ts`, or a `<Todo />` marker.
 - Label every project honestly: freelance, TripleTen bootcamp, practice project or course work.
-- The First-Rate client is named only when `site.firstRateNamed` is true (needs their OK).
+- There are no clients: the freelance projects are Maor's own. Never write "client" or name
+  the moving company whose site he tested (its GitHub repo keeps its name).
+- No Figma: Maor does not list it as a skill. Say "design mock-ups" or "the designs".
 - The phone number appears only in the CV PDF. `tests/cv.spec.ts` fails if any page shows it.
 - First person, plain, specific. Buttons say exactly what happens. No dash-separated clauses
   in project copy (write a colon or a new sentence).

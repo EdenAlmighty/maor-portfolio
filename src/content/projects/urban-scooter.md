@@ -8,11 +8,11 @@ types: [manual, mobile, api, database]
 start: 2024-08
 end: 2024-08
 role: QA tester (TripleTen project)
-tools: [Postman, Android Studio emulator, PostgreSQL, Jira, Figma]
+tools: [Postman, Android Studio emulator, PostgreSQL, Jira]
 result: Web, mobile and API test cases with bug reports, checked against PostgreSQL
 notes:
   - Tested the order form with equivalence classes and edge values, and the order status page.
-  - Wrote positive and negative test cases for the courier app from Figma, and ran them on an Android Studio emulator.
+  - Wrote positive and negative test cases for the courier app from its design mock-ups, and ran them on an Android Studio emulator.
   - Tested the API in Postman and checked that the data it returned matched the PostgreSQL database.
 evidence:
   - label: Test cases (Google Sheets)
